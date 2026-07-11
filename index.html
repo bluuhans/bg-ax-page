@@ -141,6 +141,10 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
 .switcher button{min-width:44px;min-height:44px;border:none;background:transparent;border-radius:999px;font-weight:700;font-size:.95rem;color:var(--ink-soft);cursor:pointer}
 .switcher button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 .switcher.hidden{display:none}
+/* ===== 편집 모드 ===== */
+body.editing main{outline:2px dashed var(--accent);outline-offset:6px}
+main[contenteditable="true"]:focus{outline:none}
+.switcher .divider{width:1px;align-self:stretch;background:var(--line);margin:6px 2px}
 /* ===== 반응형 ===== */
 @media (min-width:640px){
   .grid-3{grid-template-columns:repeat(2,1fr)}
@@ -497,11 +501,19 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
   <button type="button" data-v="A" aria-pressed="true">A</button>
   <button type="button" data-v="B" aria-pressed="false">B</button>
   <button type="button" data-v="C" aria-pressed="false">C</button>
+  <span class="divider" aria-hidden="true"></span>
+  <button type="button" id="editBtn" aria-pressed="false">편집</button>
+  <button type="button" id="dlBtn" hidden>받기</button>
+  <button type="button" id="resetBtn" hidden>원본</button>
 </div>
 
 <script>
 (function(){
   var html=document.documentElement;
+  /* 편집 임시저장 복원 (변형·리빌 적용 전에 수행) */
+  var KEY='ax-edit-html',mainEl=document.querySelector('main'),draft=null;
+  try{draft=localStorage.getItem(KEY)}catch(e){}
+  if(draft){mainEl.innerHTML=draft}
   var params=new URLSearchParams(location.search);
   var urlV=(params.get('variant')||'').toUpperCase();
   var saved=null;
@@ -544,6 +556,41 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
     s.setAttribute('aria-expanded',String(d.open));
     d.addEventListener('toggle',function(){s.setAttribute('aria-expanded',String(d.open))});
   });
+
+  /* ===== 편집 모드: 텍스트 직접 수정 + 자동 임시저장 + 수정본 다운로드 ===== */
+  var editBtn=document.getElementById('editBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
+  var editing=false,saveTimer=null;
+  function persist(){try{localStorage.setItem(KEY,mainEl.innerHTML)}catch(e){}}
+  function showReset(){var has=false;try{has=!!localStorage.getItem(KEY)}catch(e){}resetBtn.hidden=!has}
+  editBtn.addEventListener('click',function(){
+    editing=!editing;
+    mainEl.contentEditable=editing?'true':'false';
+    document.body.classList.toggle('editing',editing);
+    editBtn.setAttribute('aria-pressed',String(editing));
+    dlBtn.hidden=!editing;
+    if(!editing){persist();showReset()}
+  });
+  mainEl.addEventListener('input',function(){
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(function(){persist();showReset()},400);
+  });
+  mainEl.addEventListener('click',function(e){
+    if(editing){var a=e.target.closest('a');if(a)e.preventDefault()}
+  });
+  resetBtn.addEventListener('click',function(){
+    try{localStorage.removeItem(KEY)}catch(e){}
+    location.reload();
+  });
+  dlBtn.addEventListener('click',function(){
+    var doc=document.documentElement.cloneNode(true);
+    var m=doc.querySelector('main');if(m)m.removeAttribute('contenteditable');
+    var b=doc.querySelector('body');if(b)b.classList.remove('editing');
+    var blob=new Blob(['<!DOCTYPE html>\n'+doc.outerHTML],{type:'text/html'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='index.html';a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  showReset();
 })();
 </script>
 </body>
