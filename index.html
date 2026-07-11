@@ -141,6 +141,18 @@ body.editing main{outline:2px dashed var(--accent);outline-offset:6px}
 main[contenteditable="true"]:focus{outline:none}
 #toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,8px);z-index:60;background:var(--ink);color:var(--bg);font-size:var(--text-small);font-weight:600;padding:10px 18px;border-radius:var(--r-btn);opacity:0;pointer-events:none;transition:opacity .25s ease-out,transform .25s ease-out;max-width:min(92vw,480px)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+/* ===== 서버 저장 연결 패널 ===== */
+#ghPanel{position:fixed;right:16px;bottom:84px;z-index:60;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:0 4px 20px oklch(0.24 0.012 75/.14);padding:var(--s5);width:min(92vw,360px);font-size:var(--text-small)}
+#ghPanel strong{display:block;font-size:1rem;margin-bottom:var(--s2)}
+#ghPanel p{margin:0 0 var(--s3)}
+#ghPanel .err{color:oklch(0.5 0.16 25);font-weight:600}
+#ghPanel .err:empty{display:none}
+#ghPanel input{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-btn);font:inherit;background:var(--bg);color:var(--ink)}
+#ghPanel .row{display:flex;gap:var(--s3);margin:var(--s3) 0}
+#ghPanel .row button{min-height:44px;padding:0 16px;border-radius:var(--r-btn);font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+#ghPanel .row #ghOk{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#ghPanel .hint{color:var(--ink-soft);margin:0}
+@media (max-width:639px){#ghPanel{right:50%;transform:translateX(50%)}}
 /* ===== 반응형 ===== */
 @media (min-width:640px){
   .grid-3{grid-template-columns:repeat(2,1fr)}
@@ -477,6 +489,19 @@ main[contenteditable="true"]:focus{outline:none}
   </div>
 </footer>
 
+<!-- 서버 저장 연결 패널 (토큰은 이 브라우저 localStorage에만 보관, 소스에 포함되지 않음) -->
+<div id="ghPanel" hidden>
+  <strong>서버 저장 연결</strong>
+  <p id="ghMsg" class="err" aria-live="polite"></p>
+  <p>처음 한 번, GitHub 접근 토큰이 필요합니다. 토큰은 이 브라우저에만 보관됩니다.</p>
+  <input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…" aria-label="GitHub 접근 토큰">
+  <div class="row">
+    <button type="button" id="ghOk">연결하고 저장</button>
+    <button type="button" id="ghCancel">취소</button>
+  </div>
+  <p class="hint"><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a> — Repository access는 bg-ax-page 하나만, Permissions는 Contents: Read and write</p>
+</div>
+
 <!-- 페이지 도구 (검토용 편집 — 외부 공유 시 ?share 를 붙이면 숨김) -->
 <div class="switcher" role="group" aria-label="페이지 도구">
   <button type="button" id="editBtn" aria-pressed="false">편집</button>
@@ -520,15 +545,18 @@ main[contenteditable="true"]:focus{outline:none}
     d.addEventListener('toggle',function(){s.setAttribute('aria-expanded',String(d.open))});
   });
 
-  /* ===== 편집 모드: 텍스트 직접 수정 + 자동 임시저장 + 수정본 다운로드 ===== */
+  /* ===== 편집 모드: 직접 수정 + 자동 임시저장 + 서버 저장 + 수정본 다운로드 ===== */
   var editBtn=document.getElementById('editBtn'),saveBtn=document.getElementById('saveBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
+  var ghPanel=document.getElementById('ghPanel'),ghInput=document.getElementById('ghToken'),ghOk=document.getElementById('ghOk'),ghCancel=document.getElementById('ghCancel'),ghMsg=document.getElementById('ghMsg');
+  var REPO='bluuhans/bg-ax-page',FILE='index.html',BRANCH='main',TKEY='ax-gh-token';
+  var CAN_PUSH=/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
   var editing=false,saveTimer=null,toastTimer=null;
   function toast(msg){
     var t=document.getElementById('toast');
     if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}
     t.textContent=msg;t.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer=setTimeout(function(){t.classList.remove('show')},2200);
+    toastTimer=setTimeout(function(){t.classList.remove('show')},3200);
   }
   function setEditing(on){
     editing=on;
@@ -537,17 +565,78 @@ main[contenteditable="true"]:focus{outline:none}
     editBtn.setAttribute('aria-pressed',String(on));
     saveBtn.hidden=!on;
     dlBtn.hidden=!on;
+    if(!on){ghPanel.hidden=true}
   }
   function persist(){try{localStorage.setItem(KEY,mainEl.innerHTML)}catch(e){}}
   function showReset(){var has=false;try{has=!!localStorage.getItem(KEY)}catch(e){}resetBtn.hidden=!has}
+  function b64utf8(str){
+    var bytes=new TextEncoder().encode(str),bin='',i;
+    for(i=0;i<bytes.length;i+=32768){bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+32768))}
+    return btoa(bin);
+  }
+  function serializeDoc(){
+    var doc=document.documentElement.cloneNode(true);
+    var m=doc.querySelector('main');if(m)m.removeAttribute('contenteditable');
+    var b=doc.querySelector('body');if(b)b.classList.remove('editing');
+    var t=doc.querySelector('#toast');if(t)t.remove();
+    var p=doc.querySelector('#ghPanel');if(p){p.setAttribute('hidden','');var inp=p.querySelector('#ghToken');if(inp)inp.removeAttribute('value')}
+    ['saveBtn','dlBtn','resetBtn'].forEach(function(id){var el=doc.querySelector('#'+id);if(el)el.setAttribute('hidden','')});
+    var e=doc.querySelector('#editBtn');if(e)e.setAttribute('aria-pressed','false');
+    doc.querySelectorAll('.reveal.in').forEach(function(el){el.classList.remove('in')});
+    doc.querySelectorAll('.switcher.hidden').forEach(function(el){el.classList.remove('hidden')});
+    return '<!DOCTYPE html>\n'+doc.outerHTML;
+  }
+  function showPanel(msg){ghMsg.textContent=msg||'';ghPanel.hidden=false;ghInput.focus()}
+  function saveLocal(){persist();showReset();setEditing(false);toast('이 브라우저에 저장되었습니다.')}
+  function saveRemote(token){
+    var oldLabel=saveBtn.textContent;
+    saveBtn.disabled=true;saveBtn.textContent='저장 중…';persist();
+    var api='https://api.github.com/repos/'+REPO+'/contents/'+FILE;
+    var headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+    function fail(res){var err=new Error('save failed');err.auth=(res&&(res.status===401||res.status===403));throw err}
+    fetch(api+'?ref='+BRANCH,{headers:headers})
+      .then(function(res){
+        if(res.status===401||res.status===403)fail(res);
+        return res.ok?res.json().then(function(j){return j.sha}):null;
+      })
+      .then(function(sha){
+        var body={message:'페이지 편집 저장 (웹 편집 모드)',content:b64utf8(serializeDoc()),branch:BRANCH};
+        if(sha)body.sha=sha;
+        return fetch(api,{method:'PUT',headers:headers,body:JSON.stringify(body)});
+      })
+      .then(function(put){
+        if(!put.ok)fail(put);
+        try{localStorage.removeItem(KEY)}catch(e){}
+        showReset();setEditing(false);
+        toast('서버에 저장되었습니다. 1~2분 안에 모든 방문자에게 반영됩니다.');
+      })
+      .catch(function(err){
+        if(err&&err.auth){
+          try{localStorage.removeItem(TKEY)}catch(e){}
+          showPanel('토큰이 유효하지 않습니다. 새 토큰으로 다시 연결해 주세요.');
+        }else{
+          toast('저장하지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요. 편집 내용은 이 브라우저에 남아 있습니다.');
+        }
+      })
+      .then(function(){saveBtn.disabled=false;saveBtn.textContent=oldLabel});
+  }
   editBtn.addEventListener('click',function(){
     setEditing(!editing);
     if(!editing){persist();showReset()}
   });
   saveBtn.addEventListener('click',function(){
-    persist();showReset();setEditing(false);
-    toast('저장되었습니다. 이 브라우저에 보관되며, 원본 버튼으로 되돌릴 수 있습니다.');
+    if(!CAN_PUSH){saveLocal();return}
+    var t=null;try{t=localStorage.getItem(TKEY)}catch(e){}
+    if(t){saveRemote(t)}else{showPanel('')}
   });
+  ghOk.addEventListener('click',function(){
+    var v=ghInput.value.trim();
+    if(!v){ghMsg.textContent='토큰을 입력해 주세요.';return}
+    try{localStorage.setItem(TKEY,v)}catch(e){}
+    ghPanel.hidden=true;ghInput.value='';
+    saveRemote(v);
+  });
+  ghCancel.addEventListener('click',function(){ghPanel.hidden=true;ghInput.value=''});
   mainEl.addEventListener('input',function(){
     clearTimeout(saveTimer);
     saveTimer=setTimeout(function(){persist();showReset()},400);
@@ -560,10 +649,7 @@ main[contenteditable="true"]:focus{outline:none}
     location.reload();
   });
   dlBtn.addEventListener('click',function(){
-    var doc=document.documentElement.cloneNode(true);
-    var m=doc.querySelector('main');if(m)m.removeAttribute('contenteditable');
-    var b=doc.querySelector('body');if(b)b.classList.remove('editing');
-    var blob=new Blob(['<!DOCTYPE html>\n'+doc.outerHTML],{type:'text/html'});
+    var blob=new Blob([serializeDoc()],{type:'text/html'});
     var a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download='index.html';a.click();
     URL.revokeObjectURL(a.href);
