@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-variant="A">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -137,14 +137,12 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
 .cta-band .pre{margin:0 0 var(--s4);font-weight:600}
 /* ===== 변형 스위처 ===== */
 .switcher{position:fixed;right:16px;bottom:16px;z-index:50;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;display:flex;gap:2px;box-shadow:0 2px 12px oklch(0.24 0.012 75/.08)}
-.switcher span{align-self:center;padding:0 10px;font-size:var(--text-small);color:var(--ink-soft)}
 .switcher button{min-width:44px;min-height:44px;border:none;background:transparent;border-radius:999px;font-weight:700;font-size:.95rem;color:var(--ink-soft);cursor:pointer}
 .switcher button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 .switcher.hidden{display:none}
 /* ===== 편집 모드 ===== */
 body.editing main{outline:2px dashed var(--accent);outline-offset:6px}
 main[contenteditable="true"]:focus{outline:none}
-.switcher .divider{width:1px;align-self:stretch;background:var(--line);margin:6px 2px}
 /* ===== 반응형 ===== */
 @media (min-width:640px){
   .grid-3{grid-template-columns:repeat(2,1fr)}
@@ -167,24 +165,16 @@ main[contenteditable="true"]:focus{outline:none}
   .hero .cta-row .btn{width:100%}
   .switcher{right:50%;transform:translateX(50%)}
 }
-/* ===== 변형 B: 에디토리얼 ===== */
-[data-variant="B"] .principles,[data-variant="B"] .patterns,[data-variant="B"] .vision{background:var(--bg)}
-[data-variant="B"] .card,[data-variant="B"] .pattern{border:none;padding:var(--s5) 0;border-top:2px solid var(--ink);border-radius:0}
-[data-variant="B"] .hero blockquote{font-size:calc(var(--text-hero) * 1.12)}
-[data-variant="B"] section{padding-top:var(--s8)}
-[data-variant="B"] .sec-head{border-top:2px solid var(--ink);padding-top:var(--s4)}
-[data-variant="B"] .sec-head .overline{color:var(--ink)}
-[data-variant="B"] .signal{background:transparent;padding:0;font-size:1.15rem}
-/* ===== 변형 C: 인터랙티브(절제된 모션) ===== */
+/* ===== 모션 (구 시안 C — 2026-07-11 단일 확정) ===== */
 @media (prefers-reduced-motion:no-preference){
-  [data-variant="C"] .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease-out,transform .5s ease-out}
-  [data-variant="C"] .reveal.in{opacity:1;transform:none}
-  [data-variant="C"] .hero .seq{opacity:0;animation:fadeUp .6s ease-out forwards}
-  [data-variant="C"] .hero .seq:nth-child(1){animation-delay:.05s}
-  [data-variant="C"] .hero .seq:nth-child(2){animation-delay:.13s}
-  [data-variant="C"] .hero .seq:nth-child(3){animation-delay:.21s}
-  [data-variant="C"] .hero .seq:nth-child(4){animation-delay:.29s}
-  [data-variant="C"] .hero .seq:nth-child(5){animation-delay:.37s}
+  .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease-out,transform .5s ease-out}
+  .reveal.in{opacity:1;transform:none}
+  .hero .seq{opacity:0;animation:fadeUp .6s ease-out forwards}
+  .hero .seq:nth-child(1){animation-delay:.05s}
+  .hero .seq:nth-child(2){animation-delay:.13s}
+  .hero .seq:nth-child(3){animation-delay:.21s}
+  .hero .seq:nth-child(4){animation-delay:.29s}
+  .hero .seq:nth-child(5){animation-delay:.37s}
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
 </style>
@@ -495,13 +485,8 @@ main[contenteditable="true"]:focus{outline:none}
   </div>
 </footer>
 
-<!-- 변형 스위처 (검토용 — 외부 공유 시 ?variant=A 로 고정하면 자동 숨김) -->
-<div class="switcher" role="group" aria-label="디자인 시안 선택">
-  <span>시안</span>
-  <button type="button" data-v="A" aria-pressed="true">A</button>
-  <button type="button" data-v="B" aria-pressed="false">B</button>
-  <button type="button" data-v="C" aria-pressed="false">C</button>
-  <span class="divider" aria-hidden="true"></span>
+<!-- 페이지 도구 (검토용 편집 — 외부 공유 시 ?share 를 붙이면 숨김) -->
+<div class="switcher" role="group" aria-label="페이지 도구">
   <button type="button" id="editBtn" aria-pressed="false">편집</button>
   <button type="button" id="dlBtn" hidden>받기</button>
   <button type="button" id="resetBtn" hidden>원본</button>
@@ -509,30 +494,15 @@ main[contenteditable="true"]:focus{outline:none}
 
 <script>
 (function(){
-  var html=document.documentElement;
-  /* 편집 임시저장 복원 (변형·리빌 적용 전에 수행) */
+  /* 편집 임시저장 복원 (리빌 적용 전에 수행) */
   var KEY='ax-edit-html',mainEl=document.querySelector('main'),draft=null;
   try{draft=localStorage.getItem(KEY)}catch(e){}
   if(draft){mainEl.innerHTML=draft}
   var params=new URLSearchParams(location.search);
-  var urlV=(params.get('variant')||'').toUpperCase();
-  var saved=null;
-  try{saved=localStorage.getItem('ax-variant')}catch(e){}
-  var v=['A','B','C'].indexOf(urlV)>-1?urlV:(['A','B','C'].indexOf(saved)>-1?saved:'A');
   var sw=document.querySelector('.switcher');
-  function apply(nv){
-    html.setAttribute('data-variant',nv);
-    sw.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v===nv))});
-    try{localStorage.setItem('ax-variant',nv)}catch(e){}
-    if(nv==='C'){observeAll()}
-  }
-  if(['A','B','C'].indexOf(urlV)>-1){sw.classList.add('hidden')}
-  sw.addEventListener('click',function(e){
-    var b=e.target.closest('button[data-v]');
-    if(b){apply(b.dataset.v)}
-  });
+  if(params.has('share')){sw.classList.add('hidden')}
 
-  /* C안 스크롤 리빌 */
+  /* 스크롤 리빌 */
   var observed=false,io=null;
   function observeAll(){
     if(observed||!('IntersectionObserver' in window))return;
@@ -548,7 +518,7 @@ main[contenteditable="true"]:focus{outline:none}
       else{io.observe(el)}
     });
   }
-  apply(v);
+  observeAll();
 
   /* FAQ aria-expanded 동기화 */
   document.querySelectorAll('.faq details').forEach(function(d){
