@@ -139,6 +139,8 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
 /* ===== 편집 모드 ===== */
 body.editing main{outline:2px dashed var(--accent);outline-offset:6px}
 main[contenteditable="true"]:focus{outline:none}
+#toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,8px);z-index:60;background:var(--ink);color:var(--bg);font-size:var(--text-small);font-weight:600;padding:10px 18px;border-radius:var(--r-btn);opacity:0;pointer-events:none;transition:opacity .25s ease-out,transform .25s ease-out;max-width:min(92vw,480px)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 /* ===== 반응형 ===== */
 @media (min-width:640px){
   .grid-3{grid-template-columns:repeat(2,1fr)}
@@ -478,6 +480,7 @@ main[contenteditable="true"]:focus{outline:none}
 <!-- 페이지 도구 (검토용 편집 — 외부 공유 시 ?share 를 붙이면 숨김) -->
 <div class="switcher" role="group" aria-label="페이지 도구">
   <button type="button" id="editBtn" aria-pressed="false">편집</button>
+  <button type="button" id="saveBtn" hidden>저장</button>
   <button type="button" id="dlBtn" hidden>받기</button>
   <button type="button" id="resetBtn" hidden>원본</button>
 </div>
@@ -518,17 +521,32 @@ main[contenteditable="true"]:focus{outline:none}
   });
 
   /* ===== 편집 모드: 텍스트 직접 수정 + 자동 임시저장 + 수정본 다운로드 ===== */
-  var editBtn=document.getElementById('editBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
-  var editing=false,saveTimer=null;
+  var editBtn=document.getElementById('editBtn'),saveBtn=document.getElementById('saveBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
+  var editing=false,saveTimer=null,toastTimer=null;
+  function toast(msg){
+    var t=document.getElementById('toast');
+    if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}
+    t.textContent=msg;t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.classList.remove('show')},2200);
+  }
+  function setEditing(on){
+    editing=on;
+    mainEl.contentEditable=on?'true':'false';
+    document.body.classList.toggle('editing',on);
+    editBtn.setAttribute('aria-pressed',String(on));
+    saveBtn.hidden=!on;
+    dlBtn.hidden=!on;
+  }
   function persist(){try{localStorage.setItem(KEY,mainEl.innerHTML)}catch(e){}}
   function showReset(){var has=false;try{has=!!localStorage.getItem(KEY)}catch(e){}resetBtn.hidden=!has}
   editBtn.addEventListener('click',function(){
-    editing=!editing;
-    mainEl.contentEditable=editing?'true':'false';
-    document.body.classList.toggle('editing',editing);
-    editBtn.setAttribute('aria-pressed',String(editing));
-    dlBtn.hidden=!editing;
+    setEditing(!editing);
     if(!editing){persist();showReset()}
+  });
+  saveBtn.addEventListener('click',function(){
+    persist();showReset();setEditing(false);
+    toast('저장되었습니다. 이 브라우저에 보관되며, 원본 버튼으로 되돌릴 수 있습니다.');
   });
   mainEl.addEventListener('input',function(){
     clearTimeout(saveTimer);
