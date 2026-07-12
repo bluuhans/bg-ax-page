@@ -489,17 +489,16 @@ main[contenteditable="true"]:focus{outline:none}
   </div>
 </footer>
 
-<!-- 서버 저장 연결 패널 (토큰은 이 브라우저 localStorage에만 보관, 소스에 포함되지 않음) -->
+<!-- 저장 확인 패널 (암구호는 이 브라우저 localStorage에만 보관) -->
 <div id="ghPanel" hidden>
-  <strong>서버 저장 연결</strong>
+  <strong>저장 확인</strong>
   <p id="ghMsg" class="err" aria-live="polite"></p>
-  <p>처음 한 번, GitHub 접근 토큰이 필요합니다. 토큰은 이 브라우저에만 보관됩니다.</p>
-  <input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…" aria-label="GitHub 접근 토큰">
+  <p>저장 암구호를 입력해 주세요. 이 브라우저에 기억되어 다음부터 묻지 않습니다.</p>
+  <input id="ghToken" type="password" autocomplete="off" placeholder="암구호" aria-label="저장 암구호">
   <div class="row">
-    <button type="button" id="ghOk">연결하고 저장</button>
+    <button type="button" id="ghOk">저장</button>
     <button type="button" id="ghCancel">취소</button>
   </div>
-  <p class="hint"><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a> — Repository access는 bg-ax-page 하나만, Permissions는 Contents: Read and write</p>
 </div>
 
 <!-- 페이지 도구 (검토용 편집 — 외부 공유 시 ?share 를 붙이면 숨김) -->
@@ -545,18 +544,20 @@ main[contenteditable="true"]:focus{outline:none}
     d.addEventListener('toggle',function(){s.setAttribute('aria-expanded',String(d.open))});
   });
 
-  /* ===== 편집 모드: 직접 수정 + 자동 임시저장 + 서버 저장 + 수정본 다운로드 ===== */
+  /* ===== 편집 모드: 직접 수정 + 자동 임시저장 + 서버 저장(폼 중계) + 수정본 다운로드 ===== */
   var editBtn=document.getElementById('editBtn'),saveBtn=document.getElementById('saveBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
   var ghPanel=document.getElementById('ghPanel'),ghInput=document.getElementById('ghToken'),ghOk=document.getElementById('ghOk'),ghCancel=document.getElementById('ghCancel'),ghMsg=document.getElementById('ghMsg');
-  var REPO='bluuhans/bg-ax-page',FILE='index.html',BRANCH='main',TKEY='ax-gh-token';
+  var FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSdupgqvVBNU3QxvYoclpwyiS6n_56hOsKEQ-m97DDlV_uAHAw/formResponse';
+  var ENTRY_PASS='entry.559603910',ENTRY_CONTENT='entry.248824569',PKEY='ax-pass';
   var CAN_PUSH=/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
+  try{localStorage.removeItem('ax-gh-token')}catch(e){}
   var editing=false,saveTimer=null,toastTimer=null;
   function toast(msg){
     var t=document.getElementById('toast');
     if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}
     t.textContent=msg;t.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer=setTimeout(function(){t.classList.remove('show')},3200);
+    toastTimer=setTimeout(function(){t.classList.remove('show')},4000);
   }
   function setEditing(on){
     editing=on;
@@ -569,10 +570,11 @@ main[contenteditable="true"]:focus{outline:none}
   }
   function persist(){try{localStorage.setItem(KEY,mainEl.innerHTML)}catch(e){}}
   function showReset(){var has=false;try{has=!!localStorage.getItem(KEY)}catch(e){}resetBtn.hidden=!has}
-  function b64utf8(str){
-    var bytes=new TextEncoder().encode(str),bin='',i;
-    for(i=0;i<bytes.length;i+=32768){bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+32768))}
-    return btoa(bin);
+  function cleanMain(){
+    var c=mainEl.cloneNode(true);
+    c.removeAttribute('contenteditable');
+    c.querySelectorAll('.reveal').forEach(function(el){el.classList.remove('in')});
+    return c.innerHTML;
   }
   function serializeDoc(){
     var doc=document.documentElement.cloneNode(true);
@@ -588,41 +590,24 @@ main[contenteditable="true"]:focus{outline:none}
   }
   function showPanel(msg){ghMsg.textContent=msg||'';ghPanel.hidden=false;ghInput.focus()}
   function saveLocal(){persist();showReset();setEditing(false);toast('이 브라우저에 저장되었습니다.')}
-  function explain(status,msg){
-    if(status===401)return '토큰이 올바르지 않습니다(오타 또는 만료). 토큰 전체를 다시 복사해 연결해 주세요.';
-    if(status===404)return '이 토큰으로는 저장소(bg-ax-page)에 접근할 수 없습니다. bluuhans 계정으로 로그인한 상태에서 만든 토큰인지, Repository access에서 bg-ax-page를 선택했는지 확인해 주세요.';
-    if(status===403)return '토큰 권한이 부족합니다. 토큰 설정의 Permissions에서 Contents를 Read and write로 두었는지 확인해 주세요.'+(msg?' (GitHub: '+msg+')':'');
-    return '저장하지 못했습니다 (오류 '+status+(msg?': '+msg:'')+'). 잠시 후 다시 시도해 주세요.';
-  }
-  function saveRemote(token){
+  function sendToRelay(pass){
+    var content=cleanMain();
+    if(content.length>45000){
+      toast('내용이 너무 커서 이 방식으로 전송할 수 없습니다. 받기 버튼으로 파일을 전달해 주세요.');
+      return;
+    }
     var oldLabel=saveBtn.textContent;
     saveBtn.disabled=true;saveBtn.textContent='저장 중…';persist();
-    var api='https://api.github.com/repos/'+REPO+'/contents/'+FILE;
-    var headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
-    function fail(res,json){var err=new Error('save failed');err.status=res.status;err.msg=json&&json.message||'';throw err}
-    fetch(api+'?ref='+BRANCH,{headers:headers})
-      .then(function(res){
-        if(!res.ok)return res.json().catch(function(){return null}).then(function(j){fail(res,j)});
-        return res.json().then(function(j){return j.sha});
+    var fd=new FormData();
+    fd.append(ENTRY_PASS,pass);
+    fd.append(ENTRY_CONTENT,content);
+    fetch(FORM_URL,{method:'POST',mode:'no-cors',body:fd})
+      .then(function(){
+        setEditing(false);showReset();
+        toast('저장 요청을 보냈습니다. 5~10분 안에 모든 방문자에게 반영됩니다.');
       })
-      .then(function(sha){
-        var body={message:'페이지 편집 저장 (웹 편집 모드)',content:b64utf8(serializeDoc()),branch:BRANCH};
-        if(sha)body.sha=sha;
-        return fetch(api,{method:'PUT',headers:headers,body:JSON.stringify(body)});
-      })
-      .then(function(put){
-        if(!put.ok)return put.json().catch(function(){return null}).then(function(j){fail(put,j)});
-        try{localStorage.removeItem(KEY)}catch(e){}
-        showReset();setEditing(false);
-        toast('서버에 저장되었습니다. 1~2분 안에 모든 방문자에게 반영됩니다.');
-      })
-      .catch(function(err){
-        if(err&&err.status){
-          if(err.status===401){try{localStorage.removeItem(TKEY)}catch(e){}}
-          showPanel(explain(err.status,err.msg));
-        }else{
-          toast('네트워크 오류로 저장하지 못했습니다. 편집 내용은 이 브라우저에 남아 있습니다.');
-        }
+      .catch(function(){
+        toast('전송하지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요. 편집 내용은 이 브라우저에 남아 있습니다.');
       })
       .then(function(){saveBtn.disabled=false;saveBtn.textContent=oldLabel});
   }
@@ -632,15 +617,15 @@ main[contenteditable="true"]:focus{outline:none}
   });
   saveBtn.addEventListener('click',function(){
     if(!CAN_PUSH){saveLocal();return}
-    var t=null;try{t=localStorage.getItem(TKEY)}catch(e){}
-    if(t){saveRemote(t)}else{showPanel('')}
+    var p=null;try{p=localStorage.getItem(PKEY)}catch(e){}
+    if(p){sendToRelay(p)}else{showPanel('')}
   });
   ghOk.addEventListener('click',function(){
     var v=ghInput.value.trim();
-    if(!v){ghMsg.textContent='토큰을 입력해 주세요.';return}
-    try{localStorage.setItem(TKEY,v)}catch(e){}
+    if(!v){ghMsg.textContent='암구호를 입력해 주세요.';return}
+    try{localStorage.setItem(PKEY,v)}catch(e){}
     ghPanel.hidden=true;ghInput.value='';
-    saveRemote(v);
+    sendToRelay(v);
   });
   ghCancel.addEventListener('click',function(){ghPanel.hidden=true;ghInput.value=''});
   mainEl.addEventListener('input',function(){
