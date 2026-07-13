@@ -88,11 +88,11 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .hero-cinema .container{position:relative;z-index:1}
 .hero-cinema .hero-copy{text-shadow:0 1px 18px oklch(0.22 0.015 75/.45)}
 .hero-cinema .overline{color:oklch(0.93 0.05 85)}
-.hero-cinema .cite{color:oklch(0.985 0.004 85 / .88)}
+.hero.hero-cinema .cite{color:oklch(0.985 0.004 85/.96);font-weight:600;text-shadow:0 1px 4px oklch(0.22 0.015 75/.85),0 2px 18px oklch(0.22 0.015 75/.7)}
 .hero-cinema .promise{color:oklch(0.985 0.004 85 / .92)}
 .hero-cinema .textlink{color:var(--bg);text-decoration-color:oklch(0.985 0.004 85/.5)}
 .hero-cinema .textlink:hover{color:var(--accent-tint)}
-.hero blockquote{margin:var(--s5) 0 0;font-family:var(--font-quote);font-weight:600;font-size:var(--text-hero);line-height:1.45;max-width:20ch;overflow-wrap:break-word}
+.hero blockquote{margin:var(--s5) 0 0;font-family:var(--font-quote);font-weight:600;font-size:var(--text-hero);line-height:1.45;max-width:min(20ch,100%);overflow-wrap:break-word}
 .hero .cite{display:block;margin-top:var(--s4);color:var(--ink-soft);font-size:var(--text-small)}
 .hero .promise{margin:var(--s6) 0 0;max-width:60ch}
 .hero .cta-row{margin-top:var(--s6);display:flex;gap:var(--s5);align-items:center;flex-wrap:wrap}
@@ -102,11 +102,17 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .grid-3{display:grid;grid-template-columns:1fr;gap:var(--s5)}
 .principle h3{margin-bottom:var(--s2)}
 .principle .num{color:var(--accent);font-weight:800;font-size:var(--text-small);letter-spacing:.1em;display:block;margin-bottom:var(--s2)}
+/* ===== 증거 수치 블록 ===== */
+.stats{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;margin-top:var(--s6)}
+.stat{background:var(--bg);padding:var(--s5) var(--s5) var(--s4)}
+.stat b{display:block;font-family:var(--font-quote);font-weight:600;font-size:clamp(2.1rem,3.5vw,2.9rem);line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:var(--s2);color:var(--ink-soft);font-size:var(--text-small)}
+@media (min-width:640px){.stats{grid-template-columns:repeat(3,1fr)}}
 /* ===== 인터루드(풀블리드) ===== */
 .interlude{position:relative;min-height:min(64vh,560px);display:flex;align-items:flex-end;overflow:hidden;padding:0}
 .interlude>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.08) saturate(.9) contrast(.97)}
-.int-scrim{position:absolute;inset:0;background:oklch(0.22 0.015 75 / .3)}
-.int-line{position:relative;z-index:1;margin:0 auto;width:100%;max-width:var(--container);padding:0 20px var(--s8);font-family:var(--font-quote);font-weight:600;font-size:clamp(1.4rem,2.6vw + .5rem,2.1rem);color:var(--bg);text-shadow:0 1px 14px oklch(0.22 0.015 75/.5)}
+.int-scrim{position:absolute;inset:0;background:oklch(0.22 0.015 75 / .42)}
+.int-line{position:relative;z-index:1;margin:0 auto;width:100%;max-width:var(--container);padding:0 20px var(--s8);font-family:var(--font-quote);font-weight:600;font-size:clamp(1.4rem,2.6vw + .5rem,2.1rem);color:var(--bg);text-shadow:0 1px 6px oklch(0.22 0.015 75/.65),0 2px 24px oklch(0.22 0.015 75/.6)}
 @media (min-width:640px){.int-line{padding-left:32px;padding-right:32px}}
 /* ===== 분할 헤드(텍스트+사진) ===== */
 .split-head{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--s6);align-items:center;margin-bottom:var(--s6)}
@@ -150,10 +156,11 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .trust .contract ul{margin:var(--s3) 0 0;padding-left:1.1em}
 .curve-figure{position:relative;margin:var(--s6) 0 0;border:1px solid var(--line);border-radius:var(--r-card);background:var(--bg);padding:var(--s5)}
 .curve-figure canvas{display:block;width:100%;height:auto}
+.curve-canvas{position:relative}
 .cl{position:absolute;font-size:max(12px,.8rem);font-weight:700;color:var(--ink-soft)}
-.cl-y{top:var(--s4);left:var(--s5)}
-.cl-x{right:var(--s5);bottom:calc(var(--s5) + 2.6em)}
-.cl-th{color:var(--ink);left:57.5%;top:32%}
+.cl-y{top:0;left:0}
+.cl-x{right:0;bottom:2px}
+.cl-th{color:var(--ink);left:58%;top:26%}
 .curve-figure .foot{margin-top:var(--s3)}
 /* ===== FAQ ===== */
 .faq details{border-bottom:1px solid var(--line)}
@@ -317,6 +324,7 @@ main[contenteditable="true"]:focus{outline:none}
   <section class="questions" id="questions" aria-label="질문">
     <div class="container">
       <div class="sec-head reveal">
+        <span class="overline">01 · 질문</span>
         <h2>정답보다 먼저 질문</h2>
         <p class="lead">대다수의 AI 도입이 실패하는 이유는 기술이 부족해서가 아닙니다. 올바른 질문 없이 시작했기 때문입니다.</p>
       </div>
@@ -350,6 +358,7 @@ main[contenteditable="true"]:focus{outline:none}
   <section class="principles" aria-label="원칙">
     <div class="container">
       <div class="sec-head reveal">
+        <span class="overline">02 · 철학</span>
         <h2>우리가 만드는 것은 시간입니다</h2>
         <p class="lead">절감된 시간이 더 많은 업무로 소진되면 그것은 자동화일 뿐입니다. 그 시간이 사람에게 돌아갈 때 기술은 비로소 인간다움을 강화하는 도구가 됩니다. 기계가 ‘어떻게’를 맡는 시대에 사람의 일은 ‘왜’를 묻는 것입니다.</p>
       </div>
@@ -395,7 +404,8 @@ main[contenteditable="true"]:focus{outline:none}
     <div class="container">
       <div class="split-head">
         <div class="sec-head reveal">
-          <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
+          <span class="overline">03 · 상품</span>
+        <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
         </div>
         <figure class="split-media reveal rm">
           <span class="ph"><img src="img/product-collab.jpg" alt="우산을 쓰고 나란히 언덕길을 함께 걷는 두 사람" width="1200" height="750" loading="lazy"></span>
@@ -447,6 +457,7 @@ main[contenteditable="true"]:focus{outline:none}
   <section class="patterns" aria-label="적용 영역">
     <div class="container">
       <div class="sec-head reveal">
+        <span class="overline">04 · 적용</span>
         <h2>이런 말이 나오는 곳에서 시작합니다</h2>
       </div>
       <div class="grid-2">
@@ -490,6 +501,7 @@ main[contenteditable="true"]:focus{outline:none}
   <section class="trust" aria-label="신뢰">
     <div class="container">
       <div class="sec-head reveal">
+        <span class="overline">05 · 신뢰</span>
         <h2>최후의 승자는 가장 똑똑한 시스템이 아니라, 가장 신뢰받는 시스템입니다</h2>
         <p class="lead">신뢰라는 운영체제 위에서만 자동화가 작동합니다. 투명성은 새로운 프리미엄이고, 책임은 새로운 경쟁력입니다.</p>
       </div>
@@ -512,12 +524,19 @@ main[contenteditable="true"]:focus{outline:none}
         </div>
       </div>
       <figure class="curve-figure reveal">
-        <canvas id="curveChart" width="2240" height="720" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
-        <span class="cl cl-y">성과</span>
-        <span class="cl cl-x">시간</span>
-        <span class="cl cl-th">임계점</span>
+        <div class="curve-canvas">
+          <canvas id="curveChart" width="2240" height="720" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
+          <span class="cl cl-y">성과</span>
+          <span class="cl cl-x">시간</span>
+          <span class="cl cl-th">임계점</span>
+        </div>
         <figcaption class="foot">완만한 시작을 숨기지 않습니다 — 임계점까지의 여정을 처음부터 함께 설계합니다.</figcaption>
       </figure>
+      <div class="stats reveal">
+        <div class="stat"><b>20+</b><span>개 IT 시스템을 하나의 지식 창구로 — 대기업 보안심의를 통과한 구축 실적</span></div>
+        <div class="stat"><b>7</b><span>개 업종에서 현장 검증 — 부동산·금융·연수원·제조·패션·의료·교육</span></div>
+        <div class="stat"><b>0</b><span>원 위약금 — 운영 구독은 월 단위로 해지할 수 있습니다</span></div>
+      </div>
       <p class="foot reveal" style="margin-top:var(--s5)">대기업 부동산 관리사의 규정 안내와 IT 요청 관리, 금융기관의 법령·내규 대응, 대기업 연수원의 교육 도구, 제조·패션·의료·교육의 현장 업무에서 검증했습니다.</p>
       <div class="contract reveal">
         <h3>계약 원칙</h3>
@@ -536,7 +555,8 @@ main[contenteditable="true"]:focus{outline:none}
       <div class="split-head">
         <div>
           <div class="sec-head reveal">
-            <h2>다가올 변화까지 내다보고 짓습니다</h2>
+            <span class="overline">06 · 비전</span>
+        <h2>다가올 변화까지 내다보고 짓습니다</h2>
           </div>
           <div class="reveal">
             <p>머지않아 구매와 문의의 상당 부분을 사람이 아니라 소프트웨어가 대신하게 됩니다. “미래의 고객은 기계다”라는 말은 이미 시작된 변화입니다. 그때의 경쟁력은 광고 문구가 아니라, 기계가 읽고 신뢰할 수 있는 정확하고 구조화된 정보입니다.</p>
@@ -554,6 +574,7 @@ main[contenteditable="true"]:focus{outline:none}
   <section class="faq" aria-label="자주 받는 질문">
     <div class="container">
       <div class="sec-head reveal">
+        <span class="overline">07 · 문답</span>
         <h2>자주 받는 질문</h2>
       </div>
       <div class="reveal">
