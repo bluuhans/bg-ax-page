@@ -91,6 +91,14 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .grid-3{display:grid;grid-template-columns:1fr;gap:var(--s5)}
 .principle h3{margin-bottom:var(--s2)}
 .principle .num{color:var(--accent);font-weight:800;font-size:var(--text-small);letter-spacing:.1em;display:block;margin-bottom:var(--s2)}
+/* ===== 분할 헤드(텍스트+사진) ===== */
+.split-head{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--s6);align-items:center;margin-bottom:var(--s6)}
+.split-head .sec-head{margin-bottom:var(--s4)}
+.split-media{margin:0;min-width:0}
+.split-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r-card)}
+@media (max-width:899px){.split-head{grid-template-columns:1fr}}
+/* ===== 사진 톤 보정 (design.md 웜 팔레트 정합) ===== */
+.hero-media img,.rg-item img,.split-media img{filter:saturate(.93) sepia(.05) contrast(.98)}
 /* ===== 환원 트립틱 ===== */
 .return-gallery{margin-top:var(--s7)}
 .rg-lead{font-family:var(--font-quote);font-weight:600;font-size:1.3rem;line-height:1.5;margin:0 0 var(--s5);max-width:44ch;text-wrap:balance}
@@ -316,8 +324,13 @@ main[contenteditable="true"]:focus{outline:none}
   <!-- ④ 상품 3단 -->
   <section class="products" id="how" aria-label="상품 구성">
     <div class="container">
-      <div class="sec-head reveal">
-        <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
+      <div class="split-head">
+        <div class="sec-head reveal">
+          <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
+        </div>
+        <figure class="split-media reveal rm">
+          <img src="img/product-collab.jpg" alt="자연광이 드는 작업 공간에서 함께 화면을 확인하며 일하는 두 사람" width="1200" height="750" loading="lazy">
+        </figure>
       </div>
       <div class="grid-3">
         <div class="card reveal">
@@ -437,12 +450,19 @@ main[contenteditable="true"]:focus{outline:none}
   <!-- ⑧ 비전 (v3 신설) -->
   <section class="vision" aria-label="비전">
     <div class="container">
-      <div class="sec-head reveal">
-        <h2>다가올 변화까지 내다보고 짓습니다</h2>
-      </div>
-      <div class="reveal">
-        <p>머지않아 구매와 문의의 상당 부분을 사람이 아니라 소프트웨어가 대신하게 됩니다. “미래의 고객은 기계다”라는 말은 이미 시작된 변화입니다. 그때의 경쟁력은 광고 문구가 아니라, 기계가 읽고 신뢰할 수 있는 정확하고 구조화된 정보입니다.</p>
-        <p>그래서 저희는 오늘의 시스템을 지을 때 내일의 표준을 미리 심습니다. 구조화된 데이터, 표준화된 연동, 어떤 답변 엔진에도 읽히는 투명한 정보 — 지금 짓는 시스템이 다음 시대의 자산이 되도록.</p>
+      <div class="split-head">
+        <div>
+          <div class="sec-head reveal">
+            <h2>다가올 변화까지 내다보고 짓습니다</h2>
+          </div>
+          <div class="reveal">
+            <p>머지않아 구매와 문의의 상당 부분을 사람이 아니라 소프트웨어가 대신하게 됩니다. “미래의 고객은 기계다”라는 말은 이미 시작된 변화입니다. 그때의 경쟁력은 광고 문구가 아니라, 기계가 읽고 신뢰할 수 있는 정확하고 구조화된 정보입니다.</p>
+            <p>그래서 저희는 오늘의 시스템을 지을 때 내일의 표준을 미리 심습니다. 구조화된 데이터, 표준화된 연동, 어떤 답변 엔진에도 읽히는 투명한 정보 — 지금 짓는 시스템이 다음 시대의 자산이 되도록.</p>
+          </div>
+        </div>
+        <figure class="split-media reveal rm">
+          <img src="img/vision-dawn.jpg" alt="아침 안개 위로 황금빛 해가 번지는 들판" width="1200" height="750" loading="lazy">
+        </figure>
       </div>
     </div>
   </section>
