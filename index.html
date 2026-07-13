@@ -172,7 +172,11 @@ section.faq[hidden]{display:none}
 .faq details[open] summary::after{content:"−"}
 .faq .answer{padding:0 0 var(--s5);max-width:66ch}
 /* ===== CTA 밴드 ===== */
-.cta-band{background:var(--accent);color:var(--on-accent)}
+.cta-band{position:relative;overflow:hidden;background:var(--accent-strong);color:var(--on-accent);min-height:min(72vh,640px);display:flex;align-items:center}
+.cta-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.08) saturate(.92) contrast(.97)}
+.cta-scrim{position:absolute;inset:0;background:oklch(0.24 0.03 60 / .5)}
+.cta-band .container{position:relative;z-index:1}
+.cta-band .pre,.cta-band .big{text-shadow:0 1px 6px oklch(0.2 0.02 60/.6),0 2px 22px oklch(0.2 0.02 60/.5)}
 .cta-band .big{font-size:clamp(1.25rem,2vw + .8rem,1.6rem);font-weight:700;max-width:34ch;line-height:1.55;margin:0}
 .cta-band .row{margin-top:var(--s6);display:flex;gap:var(--s5);align-items:center;flex-wrap:wrap}
 .cta-band a.mail{color:var(--on-accent);font-weight:600}
@@ -271,7 +275,7 @@ main[contenteditable="true"]:focus{outline:none}
   @supports (animation-timeline: view()){
     .rg-item img,.split-media img{animation:parallax linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
     @keyframes parallax{from{transform:translateY(4.5%) scale(1.1)}to{transform:translateY(-4.5%) scale(1.1)}}
-    .interlude>img{animation:parallaxWide linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
+    .interlude>img,.cta-bg{animation:parallaxWide linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
     @keyframes parallaxWide{from{transform:translateY(6%) scale(1.14)}to{transform:translateY(-6%) scale(1.14)}}
     .int-line{animation:lineRise linear both;animation-timeline:view();animation-range:entry 20% cover 55%}
     @keyframes lineRise{from{opacity:0;transform:translateY(28px);letter-spacing:.06em}to{opacity:1;transform:none;letter-spacing:0}}
@@ -609,6 +613,8 @@ main[contenteditable="true"]:focus{outline:none}
 
   <!-- ⑩ CTA -->
   <section class="cta-band" id="contact" aria-label="문의">
+    <img class="cta-bg" src="img/finale-dawn.jpg" alt="" width="1920" height="1000" loading="lazy" aria-hidden="true">
+    <div class="cta-scrim" aria-hidden="true"></div>
     <div class="container">
       <p class="pre reveal">미래는 예측하는 것이 아니라 선택하는 것입니다.</p>
       <p class="big reveal">본 제안이 드리는 것은 시스템이 아니라 시간입니다. 그 시간을 어디에, 누구와 쓰실지는 귀사의 몫이고, 그 외의 모든 것은 저희의 몫입니다.</p>
