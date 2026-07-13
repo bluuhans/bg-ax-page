@@ -163,6 +163,7 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .cl-th{color:var(--ink);left:58%;top:26%}
 .curve-figure .foot{margin-top:var(--s3)}
 /* ===== FAQ ===== */
+section.faq[hidden]{display:none}
 .faq details{border-bottom:1px solid var(--line)}
 .faq details:first-of-type{border-top:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:var(--s4);min-height:44px;padding:var(--s4) 0;font-weight:700;font-size:1.0625rem}
@@ -571,7 +572,7 @@ main[contenteditable="true"]:focus{outline:none}
   </section>
 
   <!-- ⑨ FAQ -->
-  <section class="faq" aria-label="자주 받는 질문">
+  <section class="faq" aria-label="자주 받는 질문" hidden><!-- 2026-07-13 사용자 지시로 숨김 — hidden 속성 제거 시 복원 -->
     <div class="container">
       <div class="sec-head reveal">
         <span class="overline">07 · 문답</span>
