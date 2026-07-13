@@ -100,7 +100,7 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .split-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
 @media (max-width:899px){.split-head{grid-template-columns:1fr}}
 /* ===== 사진 톤 보정 (design.md 웜 팔레트 정합) ===== */
-.hero-media img,.rg-item img,.split-media img{filter:sepia(.06) saturate(.88) contrast(.985)}
+.hero-media img,.rg-item img,.split-media img{filter:sepia(.08) saturate(.9) contrast(.97) brightness(1.02)}
 /* ===== 환원 트립틱 ===== */
 .return-gallery{margin-top:var(--s7)}
 .rg-lead{font-family:var(--font-quote);font-weight:600;font-size:1.3rem;line-height:1.5;margin:0 0 var(--s5);max-width:44ch;text-wrap:balance}
@@ -220,6 +220,17 @@ main[contenteditable="true"]:focus{outline:none}
   /* 버튼 미세 리프트 */
   .btn{transition:transform .2s ease,background-color .2s ease}
   .btn:hover{transform:translateY(-2px)}
+  /* 히어로 인용 — 잉크가 번지듯 좌에서 우로 쓰이는 리빌 */
+  .hero blockquote.seq{animation:inkSweep 1.4s cubic-bezier(.4,0,.2,1) .25s both}
+  @keyframes inkSweep{from{opacity:1;clip-path:inset(-4% 100% -4% -2%)}to{opacity:1;clip-path:inset(-4% -2% -4% -2%)}}
+  /* 트립틱 캡션 호버 — "다시,"가 액센트로 물듦 */
+  .rg-item figcaption b{transition:color .35s ease}
+  .rg-item:hover figcaption b{color:var(--accent)}
+  /* 스크롤 시차 — 사진이 스크롤과 다른 속도로 흐름 (지원 브라우저 한정) */
+  @supports (animation-timeline: view()){
+    .rg-item img,.split-media img{animation:parallax linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
+    @keyframes parallax{from{transform:translateY(4.5%) scale(1.1)}to{transform:translateY(-4.5%) scale(1.1)}}
+  }
   .hero .seq{opacity:0;animation:fadeUp .6s ease-out forwards}
   .hero .seq:nth-child(1){animation-delay:.05s}
   .hero .seq:nth-child(2){animation-delay:.13s}
@@ -255,7 +266,7 @@ main[contenteditable="true"]:focus{outline:none}
       </div>
       </div>
       <figure class="hero-media seq">
-        <img src="img/hero-eyes.jpg" alt="볕이 드는 카페 창가에서 서로의 눈을 바라보며 이야기하는 두 사람" width="1000" height="1000" fetchpriority="high">
+        <img src="img/hero-eyes.jpg" alt="해질녘 공원 잔디밭에서 둘러앉아 시간을 보내는 사람들" width="1100" height="880" fetchpriority="high">
       </figure>
     </div>
   </section>
@@ -321,11 +332,11 @@ main[contenteditable="true"]:focus{outline:none}
         <p class="rg-lead reveal">같은 하루, 시간이 머무는 곳이 달라집니다. 돌려받은 시간은 이렇게 쓰입니다.</p>
         <div class="rg-grid">
           <figure class="rg-item reveal rm">
-            <img src="img/return-people.jpg" alt="야외에 둘러앉아 서로를 바라보며 웃는 세 친구" width="800" height="1000" loading="lazy">
-            <figcaption><b>다시, 사람에게</b><span>눈을 맞추고 손을 잡는 시간</span></figcaption>
+            <img src="img/return-people.jpg" alt="호숫가 잔디밭에서 아이와 함께 오후를 보내는 사람" width="800" height="1000" loading="lazy">
+            <figcaption><b>다시, 사람에게</b><span>곁에 앉아 함께 보내는 오후</span></figcaption>
           </figure>
           <figure class="rg-item reveal rm">
-            <img src="img/return-craft.jpg" alt="물레 위에서 그릇을 빚는 두 손" width="800" height="1000" loading="lazy">
+            <img src="img/return-craft.jpg" alt="화분에 식물을 옮겨 심는 두 손" width="800" height="1000" loading="lazy">
             <figcaption><b>다시, 창조에게</b><span>사람의 손끝에서만 태어나는 것들</span></figcaption>
           </figure>
           <figure class="rg-item reveal rm">
@@ -345,7 +356,7 @@ main[contenteditable="true"]:focus{outline:none}
           <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
         </div>
         <figure class="split-media reveal rm">
-          <img src="img/product-collab.jpg" alt="자연광이 드는 작업 공간에서 함께 결과물을 확인하는 두 사람" width="1200" height="750" loading="lazy">
+          <img src="img/product-collab.jpg" alt="우산을 쓰고 나란히 언덕길을 함께 걷는 두 사람" width="1200" height="750" loading="lazy">
         </figure>
       </div>
       <div class="grid-3">
