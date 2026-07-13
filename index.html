@@ -71,11 +71,24 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .hero .cite{display:block;margin-top:var(--s4);color:var(--ink-soft);font-size:var(--text-small)}
 .hero .promise{margin:var(--s6) 0 0;max-width:60ch}
 .hero .cta-row{margin-top:var(--s6);display:flex;gap:var(--s5);align-items:center;flex-wrap:wrap}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:var(--s7);align-items:center}
+.hero-copy{min-width:0}
+.hero-media{margin:0;min-width:0}
+.hero-media img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-card)}
+@media (max-width:899px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-media img{aspect-ratio:3/2}
+}
 /* ===== 철학 3원칙 ===== */
 .principles{background:var(--bg-alt)}
 .grid-3{display:grid;grid-template-columns:1fr;gap:var(--s5)}
 .principle h3{margin-bottom:var(--s2)}
 .principle .num{color:var(--accent);font-weight:800;font-size:var(--text-small);letter-spacing:.1em;display:block;margin-bottom:var(--s2)}
+.phil-head{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--s6);align-items:center;margin-bottom:var(--s6)}
+.phil-head .sec-head{margin-bottom:0}
+.phil-media{margin:0;min-width:0}
+.phil-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r-card)}
+@media (max-width:899px){.phil-head{grid-template-columns:1fr}}
 /* ===== 상품 3단 ===== */
 .products .grid-3{align-items:stretch}
 .card{border:1px solid var(--line);border-radius:var(--r-card);padding:var(--s6);background:var(--bg);display:flex;flex-direction:column;gap:var(--s3)}
@@ -97,6 +110,19 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .trust h3{margin-bottom:var(--s2)}
 .trust .contract{margin-top:var(--s6);border-top:1px solid var(--line);padding-top:var(--s5)}
 .trust .contract ul{margin:var(--s3) 0 0;padding-left:1.1em}
+.curve-wrap{margin-top:var(--s4)}
+.curve-wrap canvas{display:block;width:100%;height:auto}
+/* ===== 환원 다이어그램 ===== */
+.fig-return{margin:var(--s7) 0 0;border:1px solid var(--line);border-radius:var(--r-card);background:var(--bg);padding:var(--s6)}
+.fr-title{display:block;font-size:var(--text-small);font-weight:800;letter-spacing:.12em;color:var(--accent);margin-bottom:var(--s4)}
+.fig-return .fr-row{display:flex;align-items:center;gap:var(--s4)}
+.fig-return .fr-row + .fr-row{margin-top:var(--s3)}
+.fr-label{flex:0 0 4.5em;font-size:var(--text-small);font-weight:700;color:var(--ink-soft)}
+.fr-bar{display:flex;flex:1;gap:4px;min-width:0}
+.fr-seg{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:6px;font-size:var(--text-small);font-weight:600;white-space:nowrap;overflow:hidden;min-width:0}
+.fr-seg.work{background:var(--bg-alt);color:var(--ink-soft);border:1px solid var(--line)}
+.fr-seg.human{background:var(--accent);color:var(--on-accent)}
+.fig-return figcaption{margin-top:var(--s4);color:var(--ink-soft);font-size:var(--text-small);max-width:60ch}
 /* ===== FAQ ===== */
 .faq details{border-bottom:1px solid var(--line)}
 .faq details:first-of-type{border-top:1px solid var(--line)}
@@ -162,6 +188,9 @@ main[contenteditable="true"]:focus{outline:none}
 /* 모바일 */
 @media (max-width:639px){
   .hero .cta-row .btn{width:100%}
+  .fig-return .fr-row{flex-direction:column;align-items:stretch;gap:var(--s2)}
+  .fr-label{flex:none}
+  .fr-seg{font-size:.8rem;padding:0 8px}
   .switcher{right:50%;transform:translateX(50%)}
 }
 /* ===== 모션 (구 시안 C — 2026-07-11 단일 확정) ===== */
@@ -191,7 +220,8 @@ main[contenteditable="true"]:focus{outline:none}
 <main id="top">
 <!-- ① 히어로 -->
   <section class="hero" aria-label="소개">
-    <div class="container">
+    <div class="container hero-grid">
+      <div class="hero-copy">
       <span class="overline seq">BUILDERSGATE AX</span>
       <blockquote class="seq">“이제 화면이 아닌 고객의 눈을 더 오래 바라볼 수 있게 되었습니다.”</blockquote>
       <span class="cite seq">— 00기업 김대표님</span>
@@ -200,6 +230,10 @@ main[contenteditable="true"]:focus{outline:none}
         <a class="btn" href="#contact">진단 문의하기</a>
         <a class="textlink" href="#how">일하는 방식 보기</a>
       </div>
+      </div>
+      <figure class="hero-media seq">
+        <img src="img/hero-collab.jpg" alt="자연광이 드는 자리에서 노트북 화면을 함께 보며 협업하는 두 사람" width="1080" height="1440" fetchpriority="high">
+      </figure>
     </div>
   </section>
 
@@ -239,9 +273,14 @@ main[contenteditable="true"]:focus{outline:none}
   <!-- ③ 철학 -->
   <section class="principles" aria-label="원칙">
     <div class="container">
-      <div class="sec-head reveal">
-        <h2>우리가 만드는 것은 시간입니다</h2>
-        <p class="lead">절감된 시간이 더 많은 업무로 소진되면 그것은 자동화일 뿐입니다. 그 시간이 사람에게 돌아갈 때 기술은 비로소 인간다움을 강화하는 도구가 됩니다. 기계가 ‘어떻게’를 맡는 시대에 사람의 일은 ‘왜’를 묻는 것입니다.</p>
+      <div class="phil-head">
+        <div class="sec-head reveal">
+          <h2>우리가 만드는 것은 시간입니다</h2>
+          <p class="lead">절감된 시간이 더 많은 업무로 소진되면 그것은 자동화일 뿐입니다. 그 시간이 사람에게 돌아갈 때 기술은 비로소 인간다움을 강화하는 도구가 됩니다. 기계가 ‘어떻게’를 맡는 시대에 사람의 일은 ‘왜’를 묻는 것입니다.</p>
+        </div>
+        <figure class="phil-media reveal">
+          <img src="img/philosophy-dialog.jpg" alt="탁자를 사이에 두고 눈을 맞추며 대화하는 두 사람" width="1200" height="675" loading="lazy">
+        </figure>
       </div>
       <div class="grid-3">
         <div class="principle reveal">
@@ -260,6 +299,24 @@ main[contenteditable="true"]:focus{outline:none}
           <p>자동화보다 먼저 묻습니다. 이 업무에서 기계가 대신하면 안 되는 순간은 언제입니까. 결과는 시스템이 만들어도 가치 판단은 언제나 사람이 합니다.</p>
         </div>
       </div>
+      <figure class="fig-return reveal" aria-label="환원 설계 개념도: 도입 전에는 하루의 대부분이 반복 업무에 쓰이지만, 도입 후에는 반복 업무를 시스템이 맡고 사람의 시간이 대화와 신뢰, 판단으로 돌아갑니다">
+        <span class="fr-title">하루의 재구성</span>
+        <div class="fr-row">
+          <span class="fr-label">도입 전</span>
+          <div class="fr-bar">
+            <span class="fr-seg work" style="flex:7.5">반복 업무</span>
+            <span class="fr-seg human" style="flex:2.5">사람의 시간</span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <span class="fr-label">도입 후</span>
+          <div class="fr-bar">
+            <span class="fr-seg work" style="flex:2.5">시스템이 맡음</span>
+            <span class="fr-seg human" style="flex:7.5">대화 · 신뢰 · 판단</span>
+          </div>
+        </div>
+        <figcaption>같은 하루, 시간이 머무는 곳이 달라집니다. 절감된 시간의 목적지를 착수 전에 함께 적습니다.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -359,6 +416,9 @@ main[contenteditable="true"]:focus{outline:none}
         <div class="reveal">
           <h3>정직한 곡선</h3>
           <p>도입 초기의 성과 곡선은 완만할 수 있습니다. 저희는 그것을 숨기는 대신, 임계점까지의 여정을 처음부터 함께 설계합니다.</p>
+          <div class="curve-wrap">
+            <canvas id="curveChart" width="1120" height="480" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
+          </div>
         </div>
         <div class="reveal">
           <h3>투명한 운영</h3>
@@ -504,6 +564,66 @@ main[contenteditable="true"]:focus{outline:none}
     s.setAttribute('aria-expanded',String(d.open));
     d.addEventListener('toggle',function(){s.setAttribute('aria-expanded',String(d.open))});
   });
+
+  /* ===== 정직한 곡선 차트 ===== */
+  (function(){
+    var cv=document.getElementById('curveChart');
+    if(!cv||!cv.getContext)return;
+    var cs=getComputedStyle(document.documentElement);
+    function v(n){return cs.getPropertyValue(n).trim()}
+    var ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+    var padL=76,padR=44,padT=48,padB=76;
+    var x0=padL,x1=W-padR,y0=H-padB,y1=padT+14;
+    function fy(t){return 1/(1+Math.exp(-(t*10-5.6)))}
+    function draw(prog){
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle=v('--line');ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x0,padT);ctx.lineTo(x0,y0);ctx.lineTo(x1,y0);ctx.stroke();
+      ctx.strokeStyle=v('--accent');ctx.lineWidth=5;ctx.lineCap='round';
+      ctx.beginPath();
+      var steps=Math.max(2,Math.round(120*prog));
+      for(var i=0;i<=steps;i++){
+        var t=(i/120);var px=x0+(x1-x0)*t;var py=y0-(y0-y1)*fy(t);
+        if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      var tt=0.56;
+      if(prog>=tt){
+        var tx=x0+(x1-x0)*tt,ty=y0-(y0-y1)*fy(tt);
+        ctx.setLineDash([6,8]);ctx.strokeStyle=v('--ink-soft');ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(tx,y0);ctx.lineTo(tx,ty);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=v('--accent');ctx.beginPath();ctx.arc(tx,ty,9,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=v('--bg');ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=v('--ink');ctx.font='700 27px '+v('--font-sans');
+        ctx.textAlign='left';ctx.fillText('임계점',tx+18,ty-16);
+      }
+      ctx.fillStyle=v('--ink-soft');ctx.font='600 24px '+v('--font-sans');
+      ctx.textAlign='center';ctx.fillText('시간',(x0+x1)/2,H-26);
+      ctx.save();ctx.translate(28,(padT+y0)/2);ctx.rotate(-Math.PI/2);ctx.fillText('성과',0,0);ctx.restore();
+      ctx.font='500 23px '+v('--font-sans');ctx.textAlign='left';
+      ctx.fillText('완만한 시작을 숨기지 않습니다',x0+18,y0-26);
+    }
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce||!('IntersectionObserver' in window)){draw(1);return}
+    draw(0);
+    var done=false;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting&&!done){
+          done=true;io.unobserve(cv);
+          var start=null;
+          function step(ts){
+            if(!start)start=ts;
+            var p=Math.min(1,(ts-start)/900);
+            draw(p);
+            if(p<1)requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+      });
+    },{threshold:.3});
+    io.observe(cv);
+  })();
 
   /* ===== 편집 모드: 직접 수정 + 자동 임시저장 + 서버 저장(폼 중계) + 수정본 다운로드 ===== */
   var editBtn=document.getElementById('editBtn'),saveBtn=document.getElementById('saveBtn'),dlBtn=document.getElementById('dlBtn'),resetBtn=document.getElementById('resetBtn');
