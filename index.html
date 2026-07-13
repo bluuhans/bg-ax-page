@@ -540,8 +540,12 @@ main[contenteditable="true"]:focus{outline:none}
 <script>
 (function(){
   /* 편집 임시저장 복원 (리빌 적용 전에 수행) */
-  var KEY='ax-edit-html',mainEl=document.querySelector('main'),draft=null;
-  try{draft=localStorage.getItem(KEY)}catch(e){}
+  var KEY='ax-edit-html',REVKEY='ax-edit-rev',mainEl=document.querySelector('main'),draft=null;
+  try{
+    var rev=document.lastModified;
+    if(localStorage.getItem(REVKEY)!==rev){localStorage.removeItem(KEY);localStorage.setItem(REVKEY,rev)}
+    draft=localStorage.getItem(KEY);
+  }catch(e){}
   if(draft){mainEl.innerHTML=draft}
   var params=new URLSearchParams(location.search);
   var sw=document.querySelector('.switcher');
