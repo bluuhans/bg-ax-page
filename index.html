@@ -91,11 +91,6 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .pattern .meta{color:var(--ink-soft);font-weight:600;font-size:var(--text-small)}
 .pattern .give{margin:0}
 .pattern .give b{font-weight:700}
-/* ===== 가격표 ===== */
-.pricing table{width:100%;border-collapse:collapse;margin-top:var(--s5)}
-.pricing th,.pricing td{text-align:left;padding:var(--s4) var(--s4);border-bottom:1px solid var(--line);vertical-align:top}
-.pricing thead th{background:var(--bg-alt);font-size:var(--text-small);letter-spacing:.02em}
-.pricing td.price{font-weight:700}
 .foot{color:var(--ink-soft);font-size:var(--text-small);margin-top:var(--s4)}
 /* ===== 신뢰 ===== */
 .trust .grid-3{margin-top:var(--s6)}
@@ -159,19 +154,13 @@ main[contenteditable="true"]:focus{outline:none}
   .grid-2{grid-template-columns:repeat(2,1fr)}
   .questions .qgrid{grid-template-columns:repeat(2,1fr)}
   .container{padding:0 32px}
-  .pricing td.price{white-space:nowrap}
 }
 @media (min-width:960px){
   .grid-3{grid-template-columns:repeat(3,1fr)}
   section{padding:var(--s9) 0}
 }
-/* 모바일 가격표 → 카드 전환 */
+/* 모바일 */
 @media (max-width:639px){
-  .pricing table,.pricing tbody,.pricing tr,.pricing td{display:block}
-  .pricing thead{display:none}
-  .pricing tr{border:1px solid var(--line);border-radius:var(--r-card);padding:var(--s4);margin-top:var(--s4)}
-  .pricing td{border:none;padding:2px 0}
-  .pricing td[data-label]::before{content:attr(data-label);display:block;font-size:var(--text-small);color:var(--ink-soft)}
   .hero .cta-row .btn{width:100%}
   .switcher{right:50%;transform:translateX(50%)}
 }
@@ -329,53 +318,31 @@ main[contenteditable="true"]:focus{outline:none}
         <div class="pattern reveal">
           <p class="signal">“주문이 카톡과 손글씨로 들어와서, 직원이 일일이 다시 입력해요.”</p>
           <h3>문서 · 수기 업무 전환</h3>
-          <p class="meta">5~8주 · 800만원부터</p>
+          <p class="meta">5~8주</p>
           <p class="give"><b>돌려드리는 것</b> — 재입력에 쓰던 시간. 어느 제조사에서는 담당자의 저녁 한 시간이었습니다.</p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“담당자가 매일 작년 데이터를 보면서 감으로 발주해요.”</p>
           <h3>판단 대행 · 예측</h3>
-          <p class="meta">6~8주 · 700만원부터</p>
+          <p class="meta">6~8주</p>
           <p class="give">숫자는 규칙이 계산하고, 판단의 이유는 화면에 함께 보입니다. <b>최종 결정은 언제나 사람의 것입니다.</b></p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“규정을 찾으려면 PDF를 열어 하나씩 검색해요.”</p>
           <h3>지식 검색 · 업무 도우미</h3>
-          <p class="meta">8~10주 · 1,200만원부터</p>
+          <p class="meta">8~10주</p>
           <p class="give">모든 답변에 <b>근거 문서</b>를 표시합니다. 외부로 나갈 수 없는 자료라면, 폐쇄망 안에 짓습니다.</p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“학생 한 명 한 명에게 피드백을 줄 시간이 없어요.”</p>
           <h3>교육 · 시뮬레이션</h3>
-          <p class="meta">8~10주 · 1,000만원부터</p>
+          <p class="meta">8~10주</p>
           <p class="give">훈련과 채점의 반복은 시스템이 맡고, 가르치는 분은 <b>사람에게만 가능한 지도</b>에 집중합니다.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ⑥ 가격 -->
-  <section class="pricing" id="pricing" aria-label="가격">
-    <div class="container">
-      <div class="sec-head reveal">
-        <h2>가격은 진단 후 확정되며, 확정 후에는 변하지 않습니다</h2>
-      </div>
-      <table class="reveal">
-        <thead>
-          <tr><th scope="col">단계</th><th scope="col">기간</th><th scope="col">가격</th></tr>
-        </thead>
-        <tbody>
-          <tr><td data-label="단계">AX 진단 · 환원 설계</td><td data-label="기간">2주</td><td data-label="가격" class="price">300만원 고정 <span class="foot" style="display:block;margin:0">스프린트 착수 시 전액 공제</span></td></tr>
-          <tr><td data-label="단계">스프린트 — 판단 대행 · 예측</td><td data-label="기간">6~8주</td><td data-label="가격" class="price">700만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 문서 · 수기 업무 전환</td><td data-label="기간">5~8주</td><td data-label="가격" class="price">800만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 교육 · 시뮬레이션</td><td data-label="기간">8~10주</td><td data-label="가격" class="price">1,000만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 지식 검색 · 업무 도우미</td><td data-label="기간">8~10주</td><td data-label="가격" class="price">1,200만원부터</td></tr>
-          <tr><td data-label="단계">운영 파트너십</td><td data-label="기간">월 단위</td><td data-label="가격" class="price">라이트 100 · 스탠다드 200 · 전담 400만원</td></tr>
-        </tbody>
-      </table>
-      <p class="foot">부가세 별도. “부터” 가격은 진단 후 확정 견적으로 고정됩니다.</p>
-    </div>
-  </section>
 
   <!-- ⑦ 신뢰 OS (v3 승격) -->
   <section class="trust" aria-label="신뢰">
@@ -434,10 +401,6 @@ main[contenteditable="true"]:focus{outline:none}
         <h2>자주 받는 질문</h2>
       </div>
       <div class="reveal">
-        <details>
-          <summary aria-expanded="false">이 가격이 가능한 이유가 있습니까</summary>
-          <p class="answer">가격을 낮춘 것이 아니라 생산 구조가 다릅니다. 기획·디자인·개발을 한 사람의 빌더가 AI 시스템과 함께 수행해 분업의 손실이 없습니다. 그 차이는 매주 동작하는 산출물로 확인하실 수 있습니다.</p>
-        </details>
         <details>
           <summary aria-expanded="false">대기업 SI와 무엇이 다릅니까</summary>
           <p class="answer">대형사는 전사 구축에서 시작합니다. 저희는 프로세스 하나에서 2주 안에 시작해 부서의 성과로 증명한 뒤 넓혀 갑니다. 그리고 절감된 시간의 용도까지 설계에 포함합니다.</p>
