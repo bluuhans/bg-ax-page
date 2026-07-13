@@ -110,8 +110,8 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .trust h3{margin-bottom:var(--s2)}
 .trust .contract{margin-top:var(--s6);border-top:1px solid var(--line);padding-top:var(--s5)}
 .trust .contract ul{margin:var(--s3) 0 0;padding-left:1.1em}
-.curve-wrap{margin-top:var(--s4)}
-.curve-wrap canvas{display:block;width:100%;height:auto}
+.curve-figure{margin:var(--s6) 0 0;border:1px solid var(--line);border-radius:var(--r-card);background:var(--bg);padding:var(--s5)}
+.curve-figure canvas{display:block;width:100%;height:auto}
 /* ===== 환원 다이어그램 ===== */
 .fig-return{margin:var(--s7) 0 0;border:1px solid var(--line);border-radius:var(--r-card);background:var(--bg);padding:var(--s6)}
 .fr-title{display:block;font-size:var(--text-small);font-weight:800;letter-spacing:.12em;color:var(--accent);margin-bottom:var(--s4)}
@@ -279,7 +279,7 @@ main[contenteditable="true"]:focus{outline:none}
           <p class="lead">절감된 시간이 더 많은 업무로 소진되면 그것은 자동화일 뿐입니다. 그 시간이 사람에게 돌아갈 때 기술은 비로소 인간다움을 강화하는 도구가 됩니다. 기계가 ‘어떻게’를 맡는 시대에 사람의 일은 ‘왜’를 묻는 것입니다.</p>
         </div>
         <figure class="phil-media reveal">
-          <img src="img/philosophy-dialog.jpg" alt="탁자를 사이에 두고 눈을 맞추며 대화하는 두 사람" width="1200" height="675" loading="lazy">
+          <img src="img/philosophy-dialog.jpg" alt="밝게 웃으며 상대와 이야기를 나누는 사람" width="1200" height="800" loading="lazy">
         </figure>
       </div>
       <div class="grid-3">
@@ -416,9 +416,6 @@ main[contenteditable="true"]:focus{outline:none}
         <div class="reveal">
           <h3>정직한 곡선</h3>
           <p>도입 초기의 성과 곡선은 완만할 수 있습니다. 저희는 그것을 숨기는 대신, 임계점까지의 여정을 처음부터 함께 설계합니다.</p>
-          <div class="curve-wrap">
-            <canvas id="curveChart" width="1120" height="480" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
-          </div>
         </div>
         <div class="reveal">
           <h3>투명한 운영</h3>
@@ -429,6 +426,9 @@ main[contenteditable="true"]:focus{outline:none}
           <p>대기업 보안심의를 통과한 온프레미스 구축 실적. 외부 전송이 불가한 폐쇄망에서도 짓고, 한글(HWP) 산출물·공공 디자인 표준(KRDS)·국가계약법 대금 구조에 대응합니다.</p>
         </div>
       </div>
+      <figure class="curve-figure reveal">
+        <canvas id="curveChart" width="2240" height="720" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
+      </figure>
       <p class="foot reveal" style="margin-top:var(--s5)">대기업 부동산 관리사의 규정 안내와 IT 요청 관리, 금융기관의 법령·내규 대응, 대기업 연수원의 교육 도구, 제조·패션·의료·교육의 현장 업무에서 검증했습니다.</p>
       <div class="contract reveal">
         <h3>계약 원칙</h3>
@@ -571,15 +571,15 @@ main[contenteditable="true"]:focus{outline:none}
     if(!cv||!cv.getContext)return;
     var cs=getComputedStyle(document.documentElement);
     function v(n){return cs.getPropertyValue(n).trim()}
-    var ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-    var padL=76,padR=44,padT=48,padB=76;
-    var x0=padL,x1=W-padR,y0=H-padB,y1=padT+14;
+    var ctx=cv.getContext('2d'),W=cv.width,H=cv.height,S=W/1120;
+    var padL=80*S,padR=48*S,padT=44*S,padB=64*S;
+    var x0=padL,x1=W-padR,y0=H-padB,y1=padT+10*S;
     function fy(t){return 1/(1+Math.exp(-(t*10-5.6)))}
     function draw(prog){
       ctx.clearRect(0,0,W,H);
-      ctx.strokeStyle=v('--line');ctx.lineWidth=2;
+      ctx.strokeStyle=v('--line');ctx.lineWidth=2*S;
       ctx.beginPath();ctx.moveTo(x0,padT);ctx.lineTo(x0,y0);ctx.lineTo(x1,y0);ctx.stroke();
-      ctx.strokeStyle=v('--accent');ctx.lineWidth=5;ctx.lineCap='round';
+      ctx.strokeStyle=v('--accent');ctx.lineWidth=5*S;ctx.lineCap='round';
       ctx.beginPath();
       var steps=Math.max(2,Math.round(120*prog));
       for(var i=0;i<=steps;i++){
@@ -590,18 +590,18 @@ main[contenteditable="true"]:focus{outline:none}
       var tt=0.56;
       if(prog>=tt){
         var tx=x0+(x1-x0)*tt,ty=y0-(y0-y1)*fy(tt);
-        ctx.setLineDash([6,8]);ctx.strokeStyle=v('--ink-soft');ctx.lineWidth=2;
+        ctx.setLineDash([6*S,8*S]);ctx.strokeStyle=v('--ink-soft');ctx.lineWidth=2*S;
         ctx.beginPath();ctx.moveTo(tx,y0);ctx.lineTo(tx,ty);ctx.stroke();ctx.setLineDash([]);
-        ctx.fillStyle=v('--accent');ctx.beginPath();ctx.arc(tx,ty,9,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=v('--bg');ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=v('--ink');ctx.font='700 27px '+v('--font-sans');
-        ctx.textAlign='left';ctx.fillText('임계점',tx+18,ty-16);
+        ctx.fillStyle=v('--accent');ctx.beginPath();ctx.arc(tx,ty,9*S,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=v('--bg');ctx.beginPath();ctx.arc(tx,ty,4*S,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=v('--ink');ctx.font='700 '+Math.round(26*S)+'px '+v('--font-sans');
+        ctx.textAlign='left';ctx.fillText('임계점',tx+16*S,ty-14*S);
       }
-      ctx.fillStyle=v('--ink-soft');ctx.font='600 24px '+v('--font-sans');
-      ctx.textAlign='center';ctx.fillText('시간',(x0+x1)/2,H-26);
-      ctx.save();ctx.translate(28,(padT+y0)/2);ctx.rotate(-Math.PI/2);ctx.fillText('성과',0,0);ctx.restore();
-      ctx.font='500 23px '+v('--font-sans');ctx.textAlign='left';
-      ctx.fillText('완만한 시작을 숨기지 않습니다',x0+18,y0-26);
+      ctx.fillStyle=v('--ink-soft');ctx.font='600 '+Math.round(23*S)+'px '+v('--font-sans');
+      ctx.textAlign='center';ctx.fillText('시간',(x0+x1)/2,H-20*S);
+      ctx.save();ctx.translate(30*S,(padT+y0)/2);ctx.rotate(-Math.PI/2);ctx.fillText('성과',0,0);ctx.restore();
+      ctx.font='500 '+Math.round(22*S)+'px '+v('--font-sans');ctx.textAlign='left';
+      ctx.fillText('완만한 시작을 숨기지 않습니다',x0+16*S,y0-22*S);
     }
     var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduce||!('IntersectionObserver' in window)){draw(1);return}
