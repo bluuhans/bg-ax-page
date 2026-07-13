@@ -15,7 +15,8 @@ if len(rows) < 2:
     print("제출 없음"); sys.exit(0)
 
 # 헤더: 타임스탬프, 암구호, content — 암구호가 맞는 마지막 행
-valid = [row for row in rows[1:] if len(row) >= 3 and row[1].strip() == PASS]
+passes = {p.strip() for p in PASS.split(",") if p.strip()}
+valid = [row for row in rows[1:] if len(row) >= 3 and row[1].strip() in passes]
 rejected = len(rows) - 1 - len(valid)
 if rejected:
     print(f"암구호 불일치 제출 {rejected}건 무시")
