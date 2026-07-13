@@ -26,9 +26,9 @@
   --ink:oklch(0.24 0.012 75);
   --ink-soft:oklch(0.46 0.012 75);
   --line:oklch(0.885 0.008 85);
-  --accent:oklch(0.42 0.07 200);
-  --accent-strong:oklch(0.35 0.07 200);
-  --accent-tint:oklch(0.962 0.014 200);
+  --accent:oklch(0.47 0.09 63);
+  --accent-strong:oklch(0.39 0.09 63);
+  --accent-tint:oklch(0.963 0.018 80);
   --on-accent:oklch(0.985 0.004 85);
   --font-sans:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
   --font-quote:"Noto Serif KR","Apple SD Gothic Neo",serif;
@@ -61,6 +61,14 @@ section{padding:var(--s8) 0}
 .sec-head{margin-bottom:var(--s6)}
 .sec-head .overline{display:block;margin-bottom:var(--s3)}
 .sec-head p.lead{margin:var(--s4) 0 0}
+/* ===== 스크롤 진행 헤어라인 ===== */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);z-index:90}
+@supports (animation-timeline: scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .scroll-progress{animation:progressGrow linear both;animation-timeline:scroll()}
+  }
+}
+@keyframes progressGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 /* ===== 헤더 ===== */
 header.site{border-bottom:1px solid var(--line)}
 header.site .container{display:flex;align-items:center;justify-content:space-between;height:72px}
@@ -79,7 +87,7 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .hero-bg::after{content:"";position:absolute;inset:0;background:oklch(0.22 0.015 75 / .55)}
 .hero-cinema .container{position:relative;z-index:1}
 .hero-cinema .hero-copy{text-shadow:0 1px 18px oklch(0.22 0.015 75/.45)}
-.hero-cinema .overline{color:oklch(0.9 0.03 200)}
+.hero-cinema .overline{color:oklch(0.93 0.05 85)}
 .hero-cinema .cite{color:oklch(0.985 0.004 85 / .88)}
 .hero-cinema .promise{color:oklch(0.985 0.004 85 / .92)}
 .hero-cinema .textlink{color:var(--bg);text-decoration-color:oklch(0.985 0.004 85/.5)}
@@ -255,6 +263,12 @@ main[contenteditable="true"]:focus{outline:none}
   @supports (animation-timeline: view()){
     .rg-item img,.split-media img{animation:parallax linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
     @keyframes parallax{from{transform:translateY(4.5%) scale(1.1)}to{transform:translateY(-4.5%) scale(1.1)}}
+    .interlude>img{animation:parallaxWide linear both;animation-timeline:view();animation-range:entry 0% exit 100%}
+    @keyframes parallaxWide{from{transform:translateY(6%) scale(1.14)}to{transform:translateY(-6%) scale(1.14)}}
+    .int-line{animation:lineRise linear both;animation-timeline:view();animation-range:entry 20% cover 55%}
+    @keyframes lineRise{from{opacity:0;transform:translateY(28px);letter-spacing:.06em}to{opacity:1;transform:none;letter-spacing:0}}
+    .sec-head h2{animation:headSlide linear both;animation-timeline:view();animation-range:entry 0% entry 90%}
+    @keyframes headSlide{from{opacity:.2;transform:translateX(-14px)}to{opacity:1;transform:none}}
   }
   .hero .seq{opacity:0;animation:fadeUp .6s ease-out forwards}
   .hero .overline.seq{animation:trackIn .9s ease-out .05s both}
@@ -271,6 +285,7 @@ main[contenteditable="true"]:focus{outline:none}
 <body>
 <h1 class="sr-only">빌더스게이트 AX — 인간다움을 구현하는 AI 전환</h1>
 
+<div class="scroll-progress" aria-hidden="true"></div>
 <header class="site">
   <div class="container">
     <a class="brand" href="#top">Buildersgate</a>
@@ -529,7 +544,7 @@ main[contenteditable="true"]:focus{outline:none}
           </div>
         </div>
         <figure class="split-media reveal rm">
-          <span class="ph"><img src="img/vision-dawn.jpg" alt="아침 안개 위로 황금빛 해가 번지는 들판" width="1200" height="750" loading="lazy"></span>
+          <span class="ph"><img src="img/vision-dawn.jpg" alt="언덕 잔디에 나란히 앉아 해가 떠오르는 지평선을 바라보는 두 사람" width="1200" height="750" loading="lazy"></span>
         </figure>
       </div>
     </div>
@@ -638,13 +653,14 @@ main[contenteditable="true"]:focus{outline:none}
     });
     io=new IntersectionObserver(function(entries){
       entries.forEach(function(en){
-        if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}
+        if(en.isIntersecting){en.target.classList.add('in')}
+        else if(en.boundingClientRect.top>0){en.target.classList.remove('in')}
       });
     },{threshold:.12});
     document.querySelectorAll('.reveal').forEach(function(el){
       var r=el.getBoundingClientRect();
       if(r.top<window.innerHeight){el.classList.add('in')}
-      else{io.observe(el)}
+      io.observe(el);
     });
   }
   observeAll();
