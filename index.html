@@ -81,7 +81,9 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:var(--s7);align-items:center}
 .hero-copy{min-width:0}
 .hero-media{margin:0;min-width:0}
-.hero-media img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-card)}
+.hero-media{align-self:center}
+.hero-media img{display:block;width:100%;height:auto;aspect-ratio:5/4;object-fit:cover}
+.hero-media,.rg-item,.split-media{border-radius:var(--r-card);overflow:hidden}
 @media (max-width:899px){
   .hero-grid{grid-template-columns:1fr}
   .hero-media img{aspect-ratio:3/2}
@@ -95,16 +97,16 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .split-head{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--s6);align-items:center;margin-bottom:var(--s6)}
 .split-head .sec-head{margin-bottom:var(--s4)}
 .split-media{margin:0;min-width:0}
-.split-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r-card)}
+.split-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
 @media (max-width:899px){.split-head{grid-template-columns:1fr}}
 /* ===== 사진 톤 보정 (design.md 웜 팔레트 정합) ===== */
-.hero-media img,.rg-item img,.split-media img{filter:saturate(.93) sepia(.05) contrast(.98)}
+.hero-media img,.rg-item img,.split-media img{filter:sepia(.06) saturate(.88) contrast(.985)}
 /* ===== 환원 트립틱 ===== */
 .return-gallery{margin-top:var(--s7)}
 .rg-lead{font-family:var(--font-quote);font-weight:600;font-size:1.3rem;line-height:1.5;margin:0 0 var(--s5);max-width:44ch;text-wrap:balance}
 .rg-grid{display:grid;grid-template-columns:1fr;gap:var(--s5)}
 .rg-item{margin:0;min-width:0}
-.rg-item img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-card)}
+.rg-item img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
 .rg-item figcaption{margin-top:var(--s3)}
 .rg-item figcaption b{display:block;font-weight:700}
 .rg-item figcaption span{color:var(--ink-soft);font-size:var(--text-small)}
@@ -161,10 +163,10 @@ footer.site .container{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s6);justi
 /* ===== CTA 클로징 리드 (v3) ===== */
 .cta-band .pre{margin:0 0 var(--s4);font-weight:600}
 /* ===== 변형 스위처 ===== */
-.switcher{position:fixed;right:16px;bottom:16px;z-index:50;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;display:flex;gap:2px;box-shadow:0 2px 12px oklch(0.24 0.012 75/.08)}
+.switcher{display:none;position:fixed;right:16px;bottom:max(16px, env(safe-area-inset-bottom));z-index:50;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;gap:2px;box-shadow:0 2px 12px oklch(0.24 0.012 75/.08)}
 .switcher button{min-width:44px;min-height:44px;border:none;background:transparent;border-radius:999px;font-weight:700;font-size:.95rem;color:var(--ink-soft);cursor:pointer}
 .switcher button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
-.switcher.hidden{display:none}
+.switcher.on{display:flex}
 /* ===== 편집 모드 ===== */
 body.editing main{outline:2px dashed var(--accent);outline-offset:6px}
 main[contenteditable="true"]:focus{outline:none}
@@ -204,6 +206,20 @@ main[contenteditable="true"]:focus{outline:none}
   .reveal{opacity:0;transform:translateY(8px);transition:opacity .5s ease-out,transform .5s ease-out}
   .reveal.rm{transform:translateY(12px) scale(1.02)}
   .reveal.in{opacity:1;transform:none}
+  /* 사진 호버·히어로 등장 */
+  .hero-media img,.rg-item img,.split-media img{transition:transform .6s ease}
+  .hero-media:hover img,.rg-item:hover img,.split-media:hover img{transform:scale(1.025)}
+  .hero-media img{animation:heroImg 1.1s ease-out .13s both}
+  @keyframes heroImg{from{opacity:0;transform:scale(1.045)}to{opacity:1;transform:none}}
+  /* 질문 상단 라인 드로잉 */
+  .qitem{border-top:none;position:relative;padding-top:calc(var(--s4) + 2px)}
+  .qitem::before{content:"";position:absolute;top:0;left:0;height:2px;width:100%;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .7s ease-out .15s}
+  .qitem.in::before{transform:scaleX(1)}
+  /* FAQ 답변 페이드 */
+  .faq details[open] .answer{animation:fadeUp .35s ease-out}
+  /* 버튼 미세 리프트 */
+  .btn{transition:transform .2s ease,background-color .2s ease}
+  .btn:hover{transform:translateY(-2px)}
   .hero .seq{opacity:0;animation:fadeUp .6s ease-out forwards}
   .hero .seq:nth-child(1){animation-delay:.05s}
   .hero .seq:nth-child(2){animation-delay:.13s}
@@ -227,15 +243,20 @@ main[contenteditable="true"]:focus{outline:none}
 <main id="top">
 <!-- ① 히어로 -->
   <section class="hero" aria-label="소개">
-    <div class="container">
+    <div class="container hero-grid">
+      <div class="hero-copy">
       <span class="overline seq">BUILDERSGATE AX</span>
       <blockquote class="seq">“이제 화면이 아닌 고객의 눈을 더 오래 바라볼 수 있게 되었습니다.”</blockquote>
-      <span class="cite seq">— 00기업 김대표</span>
+      <span class="cite seq">빌더스게이트가 약속하는 첫 번째 변화</span>
       <p class="promise seq">AI 시대의 진정한 도전은 기술이 아니라 기술로 얻은 시간을 인간다움에 쓰는 지혜입니다. AX는 저희에게 맡겨두시고 더 가치 있는 것을 고민하세요.</p>
       <div class="cta-row seq">
         <a class="btn" href="#contact">진단 문의하기</a>
         <a class="textlink" href="#how">일하는 방식 보기</a>
       </div>
+      </div>
+      <figure class="hero-media seq">
+        <img src="img/hero-eyes.jpg" alt="볕이 드는 카페 창가에서 서로의 눈을 바라보며 이야기하는 두 사람" width="1000" height="1000" fetchpriority="high">
+      </figure>
     </div>
   </section>
 
@@ -296,20 +317,43 @@ main[contenteditable="true"]:focus{outline:none}
           <p>자동화보다 먼저 묻습니다. 이 업무에서 기계가 대신하면 안 되는 순간은 언제입니까. 결과는 시스템이 만들어도 가치 판단은 언제나 사람이 합니다.</p>
         </div>
       </div>
+      <div class="return-gallery">
+        <p class="rg-lead reveal">같은 하루, 시간이 머무는 곳이 달라집니다. 돌려받은 시간은 이렇게 쓰입니다.</p>
+        <div class="rg-grid">
+          <figure class="rg-item reveal rm">
+            <img src="img/return-people.jpg" alt="야외에 둘러앉아 서로를 바라보며 웃는 세 친구" width="800" height="1000" loading="lazy">
+            <figcaption><b>다시, 사람에게</b><span>눈을 맞추고 손을 잡는 시간</span></figcaption>
+          </figure>
+          <figure class="rg-item reveal rm">
+            <img src="img/return-craft.jpg" alt="물레 위에서 그릇을 빚는 두 손" width="800" height="1000" loading="lazy">
+            <figcaption><b>다시, 창조에게</b><span>사람의 손끝에서만 태어나는 것들</span></figcaption>
+          </figure>
+          <figure class="rg-item reveal rm">
+            <img src="img/return-rest.jpg" alt="호숫가 풀숲에 나란히 앉아 물을 바라보는 두 사람" width="800" height="1000" loading="lazy">
+            <figcaption><b>다시, 나에게</b><span>멈추어 생각하고 회복하는 시간</span></figcaption>
+          </figure>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ④ 상품 3단 -->
   <section class="products" id="how" aria-label="상품 구성">
     <div class="container">
-      <div class="sec-head reveal">
-        <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
+      <div class="split-head">
+        <div class="sec-head reveal">
+          <h2>작게 시작해, 증명하고, 함께 운영합니다</h2>
+        </div>
+        <figure class="split-media reveal rm">
+          <img src="img/product-collab.jpg" alt="자연광이 드는 작업 공간에서 함께 결과물을 확인하는 두 사람" width="1200" height="750" loading="lazy">
+        </figure>
       </div>
       <div class="grid-3">
         <div class="card reveal">
           <span class="label">01</span>
           <h3>진단 · 환원 설계</h3>
-          <p class="meta"><span style="text-wrap-mode: initial;">열 가지 질문으로 업무와 가치를 함께 진단합니다. 첫 주는 어디에 어떻게 적용할지를, 둘째 주는 절감될 시간을 어디에 쓸지를 정합니다.</span></p>
+          <p class="meta">2주</p>
+          <p>열 가지 질문으로 업무와 가치를 함께 진단합니다. 첫 주는 어디에 어떻게 적용할지를, 둘째 주는 절감될 시간을 어디에 쓸지를 정합니다.</p>
           <ul>
             <li>업무 진단 보고서 — 적용 우선순위</li>
             <li>지켜야 할 선(자동화 금지 구역) 정의</li>
@@ -320,22 +364,27 @@ main[contenteditable="true"]:focus{outline:none}
         <div class="card reveal">
           <span class="label">02</span>
           <h3>AX 스프린트</h3>
-          <p class="meta"><span style="text-wrap-mode: initial;">프로세스 하나를 정해 완성합니다. 매주 동작하는 결과물을 확인하실 수 있습니다.</span></p>
+          <p class="meta">5~10주</p>
+          <p>프로세스 하나를 정해 완성합니다. 매주 동작하는 결과물을 확인하실 수 있습니다.</p>
           <ul>
             <li>구축 전 과정</li>
             <li>검증 화면 — 최종 확정은 사람</li>
             <li>운영 화면과 비용 상한 관리</li>
           </ul>
+          <p class="note">매주 동작하는 결과물을 함께 확인하며 진행합니다.</p>
         </div>
         <div class="card reveal">
           <span class="label">03</span>
-          <h3>운영 파트너십</h3><h3><span style="font-size: 17px; letter-spacing: -0.015em; text-wrap-mode: initial;"><br></span></h3><h3><span style="font-size: 17px; letter-spacing: -0.015em; text-wrap-mode: initial;">구축의 절반은 운영입니다. 바뀌는 업무에 맞춰 시스템도 함께 자랍니다.</span></h3>
+          <h3>운영 파트너십</h3>
+          <p class="meta">월 단위</p>
+          <p>구축의 절반은 운영입니다. 바뀌는 업무에 맞춰 시스템도 함께 자랍니다.</p>
           <ul>
             <li>모니터링과 개선</li>
             <li>월간 리포트 — 효율 · 인간 · 학습 · 신뢰 지표</li>
             <li>분기 거버넌스 리포트</li>
             <li>월 단위 해지, 위약금 없음</li>
           </ul>
+          <p class="note">자체 운영을 원하시면 관리 화면과 운영 문서를 인계합니다.</p>
         </div>
       </div>
     </div>
@@ -351,53 +400,31 @@ main[contenteditable="true"]:focus{outline:none}
         <div class="pattern reveal">
           <p class="signal">“주문이 카톡과 손글씨로 들어와서, 직원이 일일이 다시 입력해요.”</p>
           <h3>문서 · 수기 업무 전환</h3>
-          <p class="meta">5~8주 · 800만원부터</p>
+          <p class="meta">5~8주</p>
           <p class="give"><b>돌려드리는 것</b> — 재입력에 쓰던 시간. 어느 제조사에서는 담당자의 저녁 한 시간이었습니다.</p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“담당자가 매일 작년 데이터를 보면서 감으로 발주해요.”</p>
           <h3>판단 대행 · 예측</h3>
-          <p class="meta">6~8주 · 700만원부터</p>
+          <p class="meta">6~8주</p>
           <p class="give">숫자는 규칙이 계산하고, 판단의 이유는 화면에 함께 보입니다. <b>최종 결정은 언제나 사람의 것입니다.</b></p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“규정을 찾으려면 PDF를 열어 하나씩 검색해요.”</p>
           <h3>지식 검색 · 업무 도우미</h3>
-          <p class="meta">8~10주 · 1,200만원부터</p>
+          <p class="meta">8~10주</p>
           <p class="give">모든 답변에 <b>근거 문서</b>를 표시합니다. 외부로 나갈 수 없는 자료라면, 폐쇄망 안에 짓습니다.</p>
         </div>
         <div class="pattern reveal">
           <p class="signal">“학생 한 명 한 명에게 피드백을 줄 시간이 없어요.”</p>
           <h3>교육 · 시뮬레이션</h3>
-          <p class="meta">8~10주 · 1,000만원부터</p>
+          <p class="meta">8~10주</p>
           <p class="give">훈련과 채점의 반복은 시스템이 맡고, 가르치는 분은 <b>사람에게만 가능한 지도</b>에 집중합니다.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ⑥ 가격 -->
-  <section class="pricing" id="pricing" aria-label="가격">
-    <div class="container">
-      <div class="sec-head reveal">
-        <h2>가격은 진단 후 확정되며, 확정 후에는 변하지 않습니다</h2>
-      </div>
-      <table class="reveal">
-        <thead>
-          <tr><th scope="col">단계</th><th scope="col">기간</th><th scope="col">가격</th></tr>
-        </thead>
-        <tbody>
-          <tr><td data-label="단계">AX 진단 · 환원 설계</td><td data-label="기간">2주</td><td data-label="가격" class="price">300만원 고정 <span class="foot" style="display:block;margin:0">스프린트 착수 시 전액 공제</span></td></tr>
-          <tr><td data-label="단계">스프린트 — 판단 대행 · 예측</td><td data-label="기간">6~8주</td><td data-label="가격" class="price">700만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 문서 · 수기 업무 전환</td><td data-label="기간">5~8주</td><td data-label="가격" class="price">800만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 교육 · 시뮬레이션</td><td data-label="기간">8~10주</td><td data-label="가격" class="price">1,000만원부터</td></tr>
-          <tr><td data-label="단계">스프린트 — 지식 검색 · 업무 도우미</td><td data-label="기간">8~10주</td><td data-label="가격" class="price">1,200만원부터</td></tr>
-          <tr><td data-label="단계">운영 파트너십</td><td data-label="기간">월 단위</td><td data-label="가격" class="price">라이트 100 · 스탠다드 200 · 전담 400만원</td></tr>
-        </tbody>
-      </table>
-      <p class="foot">부가세 별도. “부터” 가격은 진단 후 확정 견적으로 고정됩니다.</p>
-    </div>
-  </section>
 
   <!-- ⑦ 신뢰 OS (v3 승격) -->
   <section class="trust" aria-label="신뢰">
@@ -424,6 +451,9 @@ main[contenteditable="true"]:focus{outline:none}
           <p>대기업 보안심의를 통과한 온프레미스 구축 실적. 외부 전송이 불가한 폐쇄망에서도 짓고, 한글(HWP) 산출물·공공 디자인 표준(KRDS)·국가계약법 대금 구조에 대응합니다.</p>
         </div>
       </div>
+      <figure class="curve-figure reveal">
+        <canvas id="curveChart" width="2240" height="720" role="img" aria-label="성과 곡선 그래프: 도입 초기에는 완만하게 오르다 임계점을 지나며 가파르게 상승합니다"></canvas>
+      </figure>
       <p class="foot reveal" style="margin-top:var(--s5)">대기업 부동산 관리사의 규정 안내와 IT 요청 관리, 금융기관의 법령·내규 대응, 대기업 연수원의 교육 도구, 제조·패션·의료·교육의 현장 업무에서 검증했습니다.</p>
       <div class="contract reveal">
         <h3>계약 원칙</h3>
@@ -439,12 +469,19 @@ main[contenteditable="true"]:focus{outline:none}
   <!-- ⑧ 비전 (v3 신설) -->
   <section class="vision" aria-label="비전">
     <div class="container">
-      <div class="sec-head reveal">
-        <h2>다가올 변화까지 내다보고 짓습니다</h2>
-      </div>
-      <div class="reveal">
-        <p>머지않아 구매와 문의의 상당 부분을 사람이 아니라 소프트웨어가 대신하게 됩니다. “미래의 고객은 기계다”라는 말은 이미 시작된 변화입니다. 그때의 경쟁력은 광고 문구가 아니라, 기계가 읽고 신뢰할 수 있는 정확하고 구조화된 정보입니다.</p>
-        <p>그래서 저희는 오늘의 시스템을 지을 때 내일의 표준을 미리 심습니다. 구조화된 데이터, 표준화된 연동, 어떤 답변 엔진에도 읽히는 투명한 정보 — 지금 짓는 시스템이 다음 시대의 자산이 되도록.</p>
+      <div class="split-head">
+        <div>
+          <div class="sec-head reveal">
+            <h2>다가올 변화까지 내다보고 짓습니다</h2>
+          </div>
+          <div class="reveal">
+            <p>머지않아 구매와 문의의 상당 부분을 사람이 아니라 소프트웨어가 대신하게 됩니다. “미래의 고객은 기계다”라는 말은 이미 시작된 변화입니다. 그때의 경쟁력은 광고 문구가 아니라, 기계가 읽고 신뢰할 수 있는 정확하고 구조화된 정보입니다.</p>
+            <p>그래서 저희는 오늘의 시스템을 지을 때 내일의 표준을 미리 심습니다. 구조화된 데이터, 표준화된 연동, 어떤 답변 엔진에도 읽히는 투명한 정보 — 지금 짓는 시스템이 다음 시대의 자산이 되도록.</p>
+          </div>
+        </div>
+        <figure class="split-media reveal rm">
+          <img src="img/vision-dawn.jpg" alt="아침 안개 위로 황금빛 해가 번지는 들판" width="1200" height="750" loading="lazy">
+        </figure>
       </div>
     </div>
   </section>
@@ -456,10 +493,6 @@ main[contenteditable="true"]:focus{outline:none}
         <h2>자주 받는 질문</h2>
       </div>
       <div class="reveal">
-        <details>
-          <summary aria-expanded="false">이 가격이 가능한 이유가 있습니까</summary>
-          <p class="answer">가격을 낮춘 것이 아니라 생산 구조가 다릅니다. 기획·디자인·개발을 한 사람의 빌더가 AI 시스템과 함께 수행해 분업의 손실이 없습니다. 그 차이는 매주 동작하는 산출물로 확인하실 수 있습니다.</p>
-        </details>
         <details>
           <summary aria-expanded="false">대기업 SI와 무엇이 다릅니까</summary>
           <p class="answer">대형사는 전사 구축에서 시작합니다. 저희는 프로세스 하나에서 2주 안에 시작해 부서의 성과로 증명한 뒤 넓혀 갑니다. 그리고 절감된 시간의 용도까지 설계에 포함합니다.</p>
@@ -521,7 +554,7 @@ main[contenteditable="true"]:focus{outline:none}
   </div>
 </div>
 
-<!-- 페이지 도구 (검토용 편집 — 외부 공유 시 ?share 를 붙이면 숨김) -->
+<!-- 페이지 도구 (기본 숨김 — 주소 뒤 ?edit 를 붙일 때만 표시) -->
 <div class="switcher" role="group" aria-label="페이지 도구">
   <button type="button" id="editBtn" aria-pressed="false">편집</button>
   <button type="button" id="saveBtn" hidden>저장</button>
@@ -541,7 +574,7 @@ main[contenteditable="true"]:focus{outline:none}
   if(draft){mainEl.innerHTML=draft}
   var params=new URLSearchParams(location.search);
   var sw=document.querySelector('.switcher');
-  if(params.has('share')){sw.classList.add('hidden')}
+  if(params.has('edit')){sw.classList.add('on')}
 
   /* 스크롤 리빌 */
   var observed=false,io=null;
@@ -675,7 +708,7 @@ main[contenteditable="true"]:focus{outline:none}
     ['saveBtn','dlBtn','resetBtn'].forEach(function(id){var el=doc.querySelector('#'+id);if(el)el.setAttribute('hidden','')});
     var e=doc.querySelector('#editBtn');if(e)e.setAttribute('aria-pressed','false');
     doc.querySelectorAll('.reveal.in').forEach(function(el){el.classList.remove('in')});
-    doc.querySelectorAll('.switcher.hidden').forEach(function(el){el.classList.remove('hidden')});
+    doc.querySelectorAll('.switcher.on').forEach(function(el){el.classList.remove('on')});
     return '<!DOCTYPE html>\n'+doc.outerHTML;
   }
   function showPanel(msg){ghMsg.textContent=msg||'';ghPanel.hidden=false;ghInput.focus()}
