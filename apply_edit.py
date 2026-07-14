@@ -34,7 +34,7 @@ if ts == last:
 # 안전 점검: 편집 영역으로서 최소한의 형태를 갖췄는지
 checks = [len(content) > 5000, content.count("<section") >= 8,
           content.count("<section") == content.count("</section>"),
-          'class="hero"' in content]
+          'class="hero' in content]
 if not all(checks):
     print(f"안전 점검 실패 — 반영 중단 (len={len(content)}, sec={content.count('<section')})")
     sys.exit(1)
