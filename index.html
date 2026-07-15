@@ -125,7 +125,7 @@ header.site .container{display:flex;align-items:center;justify-content:space-bet
 .rg-item img,.split-media img{filter:sepia(.08) saturate(.9) contrast(.97) brightness(1.02)}
 /* ===== 환원 트립틱 ===== */
 .return-gallery{margin-top:var(--s7)}
-.rg-lead{font-family:var(--font-quote);font-weight:600;font-size:1.3rem;line-height:1.5;margin:0 0 var(--s5);max-width:44ch;text-wrap:balance}
+.rg-lead{font-family:var(--font-quote);font-weight:600;font-size:clamp(1.5rem,1.4vw + 1rem,1.9rem);line-height:1.45;color:var(--ink);margin:0 0 var(--s6);max-width:30ch;text-wrap:balance}
 .rg-grid{display:grid;grid-template-columns:1fr;gap:var(--s5)}
 .rg-item{margin:0;min-width:0}
 .ph{display:block;border-radius:var(--r-card);overflow:hidden}
@@ -367,7 +367,7 @@ main[contenteditable="true"]:focus{outline:none}
         </div>
       </div>
       <div class="return-gallery">
-        <p class="rg-lead reveal">같은 하루, 시간이 머무는 곳이 달라집니다.&nbsp;</p>
+        <p class="rg-lead reveal">같은 하루, <br>시간이 머무는 곳이 달라집니다.</p>
         <div class="rg-grid">
           <figure class="rg-item reveal rm">
             <span class="ph"><img src="img/return-people.jpg" alt="호숫가 잔디밭에서 아이와 함께 오후를 보내는 사람" width="800" height="1000" loading="lazy"></span>
