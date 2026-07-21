@@ -12,6 +12,9 @@
 <meta property="og:image" content="https://ax.buildersgate.com/img/og-card.jpg">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!-- 디자인 시스템: ./design.md · 카피: ./ux-guide.md · 상품 원본: ./05_AX_상품설계.md -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -72,7 +75,8 @@ section{padding:var(--s8) 0}
 /* ===== 헤더 ===== */
 header.site{border-bottom:1px solid var(--line)}
 header.site .container{display:flex;align-items:center;justify-content:space-between;height:72px}
-.brand{font-weight:800;font-size:1.125rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.brand{display:flex;align-items:center;text-decoration:none}
+.brand img{height:22px;width:auto;display:block}
 .nav-cta{font-weight:600;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 /* ===== 버튼 ===== */
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);font-weight:700;font-size:1rem;text-decoration:none;border:none;cursor:pointer}
@@ -300,7 +304,7 @@ main[contenteditable="true"]:focus{outline:none}
 <div class="scroll-progress" aria-hidden="true"></div>
 <header class="site">
   <div class="container">
-    <a class="brand" href="#top">Buildersgate</a>
+    <a class="brand" href="#top"><img src="img/logo-horizontal.svg" alt="BuildersGate"></a>
     <a class="nav-cta textlink" href="#contact">문의하기</a>
   </div>
 </header>
