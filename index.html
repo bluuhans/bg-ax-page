@@ -606,8 +606,8 @@ main[contenteditable="true"]:focus{outline:none}
   </div>
 </div>
 
-<!-- 페이지 도구 (기본 표시 — 외부 공유 시 ?share 를 붙이면 숨김) -->
-<div class="switcher" role="group" aria-label="페이지 도구">
+<!-- 페이지 도구 (기본 숨김 — 편집 시 /edit/ 또는 ?edit 로 진입) -->
+<div class="switcher hidden" role="group" aria-label="페이지 도구">
   <button type="button" id="editBtn" aria-pressed="false">편집</button>
   <button type="button" id="saveBtn" hidden>저장</button>
   <button type="button" id="dlBtn" hidden>받기</button>
@@ -626,7 +626,7 @@ main[contenteditable="true"]:focus{outline:none}
   if(draft){mainEl.innerHTML=draft}
   var params=new URLSearchParams(location.search);
   var sw=document.querySelector('.switcher');
-  if(params.has('share')){sw.classList.add('hidden')}
+  if(params.has('edit')){sw.classList.remove('hidden')}
 
   /* 스크롤 리빌 */
   var observed=false,io=null;
@@ -754,7 +754,7 @@ main[contenteditable="true"]:focus{outline:none}
     ['saveBtn','dlBtn','resetBtn'].forEach(function(id){var el=doc.querySelector('#'+id);if(el)el.setAttribute('hidden','')});
     var e=doc.querySelector('#editBtn');if(e)e.setAttribute('aria-pressed','false');
     doc.querySelectorAll('.reveal.in').forEach(function(el){el.classList.remove('in')});
-    doc.querySelectorAll('.switcher.hidden').forEach(function(el){el.classList.remove('hidden')});
+    doc.querySelectorAll('.switcher').forEach(function(el){el.classList.add('hidden')});
     return '<!DOCTYPE html>\n'+doc.outerHTML;
   }
   function showPanel(msg){ghMsg.textContent=msg||'';ghPanel.hidden=false;ghInput.focus()}
