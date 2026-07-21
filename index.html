@@ -75,7 +75,8 @@ section{padding:var(--s8) 0}
 /* ===== 헤더 ===== */
 header.site{border-bottom:1px solid var(--line)}
 header.site .container{display:flex;align-items:center;justify-content:space-between;height:72px}
-.brand{font-weight:800;font-size:1.125rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.brand{display:flex;align-items:center;text-decoration:none}
+.brand img{height:28px;width:auto;display:block}
 .nav-cta{font-weight:600;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 /* ===== 버튼 ===== */
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border-radius:var(--r-btn);background:var(--accent);color:var(--on-accent);font-weight:700;font-size:1rem;text-decoration:none;border:none;cursor:pointer}
@@ -303,7 +304,7 @@ main[contenteditable="true"]:focus{outline:none}
 <div class="scroll-progress" aria-hidden="true"></div>
 <header class="site">
   <div class="container">
-    <a class="brand" href="#top">Buildersgate</a>
+    <a class="brand" href="#top"><img src="img/logo-horizontal.svg" alt="BuildersGate"></a>
     <a class="nav-cta textlink" href="#contact">문의하기</a>
   </div>
 </header>
